@@ -1,0 +1,13 @@
+doc
+html
+*.sw?
+pkg
+.jhw-cache
+coverage
+.bundle
+tmp
+cruddo.rdoc
+gli.wiki
+Gemfile.lock
+results.html
+.rbx

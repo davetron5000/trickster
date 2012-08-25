@@ -1,0 +1,5 @@
+= conman
+
+Generate this with
+    conman rdoc
+After you have described your command line interface

@@ -1,0 +1,3 @@
+module Conman
+  VERSION = '0.0.1'
+end

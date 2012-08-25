@@ -1,0 +1,6 @@
+= conman
+
+Describe your project here
+
+:include:conman.rdoc
+
