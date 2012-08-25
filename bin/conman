@@ -1,83 +1,89 @@
 #!/usr/bin/env ruby
+
 require 'gli'
-begin # XXX: Remove this begin/rescue before distributing your app
 require 'conman'
-rescue LoadError
-  STDERR.puts "In development, you need to use `bundle exec bin/todo` to run your app"
-  STDERR.puts "At install-time, RubyGems will make sure lib, etc. are in the load path"
-  STDERR.puts "Feel free to remove this message from bin/todo now"
-  exit 64
-end
+require 'erb'
+require 'stringio'
 
 include GLI::App
 
-program_desc 'Describe your application here'
+program_desc 'Bootstrap, generate, and manage your conman presentation'
 
 version Conman::VERSION
 
-desc 'Describe some switch here'
-switch [:s,:switch]
-
-desc 'Describe some flag here'
-default_value 'the default'
-arg_name 'The name of the argument'
-flag [:f,:flagname]
-
-desc 'Describe init here'
-arg_name 'Describe arguments to init here'
+desc 'Create a new conman presentation'
+arg_name 'dir_name'
 command :init do |c|
-  c.desc 'Describe a switch to init'
-  c.switch :s
-
-  c.desc 'Describe a flag to init'
-  c.default_value 'default'
-  c.flag :f
   c.action do |global_options,options,args|
-
-    # Your command logic here
-     
-    # If you have any errors, just raise them
-    # raise "that command made no sense"
-
     puts "init command ran"
   end
 end
 
-desc 'Describe build here'
-arg_name 'Describe arguments to build here'
+def write_slide(slide_type,content,slide)
+  content = content[0..-2] if content[-1] =~ /^\s*$/
+  slide.puts "<section class='#{slide_type}'>"
+  case slide_type
+  when "TITLE"
+    slide.puts "<h1>#{content[0]}</h1>"
+    slide.puts "<h2>#{content[1]}</h2>" unless content[1].nil?
+    slide.puts "<h3>#{content[2]}</h3>" unless content[2].nil?
+  when "SECTION"
+    slide.puts "<h1>#{content[0]}</h1>"
+    slide.puts "<h2>#{content[1]}</h2>" unless content[1].nil?
+    slide.puts "<h3>#{content[2]}</h3>" unless content[2].nil?
+  when "CODE"
+    if content[0] =~ /file:\/\/(.*$)/
+      content = File.open($1).readlines.map(&:chomp)
+    end
+    slide.puts "<pre><code class='ruby'>#{content[0]}"
+    content[1..-2].each { |line| slide.puts line }
+    slide.puts "#{content[-1]}</code></pre>"
+  when "BULLETS"
+    slide.puts "<h1>#{content[0]}</h1>"
+    slide.puts "<ul>"
+    slide.puts((content[1..-1].map { |_| "<li>" + _.gsub(/^[*+-o] /,'') + "</li>\n" }).join(""))
+    slide.puts "</ul>"
+  when "COMMANDLINE"
+    slide.puts "<pre><code>#{content.join("\n").gsub(">","&gt;")}</code></pre>"
+  when "IMAGE"
+    slide.puts "<img src='#{content[0]}'>"
+  else
+    slide.puts content.join("\n")
+  end
+  slide.puts "</section>"
+end
+
+desc 'Generate the presentation from your slides'
 command :build do |c|
   c.action do |global_options,options,args|
-    puts "build command ran"
+    content = []
+    slide_type = nil
+    body_io = StringIO.new
+    File.open("slides.md").readlines.each do |line|
+      line = line.chomp
+      if line =~/^!(.*)$/
+        write_slide(slide_type,content,body_io) unless slide_type.nil?
+        slide_type = $1
+        content = []
+      else
+        content << line
+      end
+    end
+    write_slide(slide_type,content,body_io)
+    body = body_io.string
+    title = "FOOBAR"
+    erb = ERB.new(File.new("erb/index.html.erb").readlines.join(""))
+    File.open("index.html","w") do |file|
+      file.puts erb.result(binding)
+    end
   end
 end
 
-desc 'Describe watch here'
-arg_name 'Describe arguments to watch here'
+desc 'Auto-generate your presentation whenever your slides change'
 command :watch do |c|
   c.action do |global_options,options,args|
     puts "watch command ran"
   end
-end
-
-pre do |global,command,options,args|
-  # Pre logic here
-  # Return true to proceed; false to abourt and not call the
-  # chosen command
-  # Use skips_pre before a command to skip this block
-  # on that command only
-  true
-end
-
-post do |global,command,options,args|
-  # Post logic here
-  # Use skips_post before a command to skip this
-  # block on that command only
-end
-
-on_error do |exception|
-  # Error logic here
-  # return false to skip default error handling
-  true
 end
 
 exit run(ARGV)

@@ -1,0 +1,30 @@
+section.TITLE, section.SECTION, section.IMAGE {
+  text-align: center;
+}
+section.BULLETS {
+  margin-left: 64px;
+}
+section.BULLETS h1 {
+  text-align: center;
+}
+section.COMMANDLINE code {
+  background: black;
+  color: green;
+}
+code {
+  border-radius: 30px;
+}
+h1, h2, h3, h4 {
+  margin: 0;
+  font-family: "Arial rounded mt bold"
+}
+h2 {
+  font-size: 90%;
+}
+h3 {
+  font-size: 80%;
+}
+p, li {
+  font-family: Helvetica;
+}
+

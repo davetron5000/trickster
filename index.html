@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>FOOBAR</title>
+    <script src="js/lib/jquery-1.8.0.min.js"></script>
+    <script src="js/lib/highlight-7.1.min.js"></script>
+    <script src="js/conman.js"></script>
+    <link rel="stylesheet" href="css/normalize.css">
+    <link rel="stylesheet" href="css/highlight-solarized_light.min.css">
+    <link rel="stylesheet" href="css/styles.css">
+    <script>
+      $(document).ready(function() {
+        Conman = ConmanLoader($,hljs,ConmanDefaultConfig);
+        Conman.load();
+      });
+    </script>
+    <style>
+      section {
+        display: none;
+      }
+      li {
+        visibility: hidden;
+      }
+    </style>
+  </head>
+  <body>
+    <section class='TITLE'>
+<h1>This is a slide</h1>
+</section>
+<section class='BULLETS'>
+<h1>Bullet title</h1>
+<ul>
+<li>some bullets</li>
+<li>here are more</li>
+<li>and here's some</li>
+</ul>
+</section>
+<section class='CODE'>
+<pre><code class='ruby'>def doit
+  puts "blah?"
+  return "foo" if crud?
+  puts "bar"
+end</code></pre>
+</section>
+<section class='COMMANDLINE'>
+<pre><code>&gt; ls -l
+foo   bar.c   main.o</code></pre>
+</section>
+<section class='SECTION'>
+<h1>Section</h1>
+<h2>Subsection title</h2>
+</section>
+
+  </body>
+</html>

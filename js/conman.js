@@ -1,10 +1,10 @@
-var ConmanDefaultConfig = { 
+var ConmanDefaultConfig = {
   /** Padding between max width and max font size */
-  padding:          164, 
+  padding:          164,
   /** Don't make fonts bigger than this */
-  maxFontSize:      500, 
+  maxFontSize:      500,
   /** Don't make fonts smaller than this */
-  minFontSize:      30, 
+  minFontSize:      30,
   /** Time, in ms, to transition between slides */
   transitionTime:   200,
   /** Keycodes that advacne to the next slide */
@@ -13,12 +13,12 @@ var ConmanDefaultConfig = {
                     34,  // Kensington presenter right arrow
                     32], // space bar
   /** Keycodes that go back to the previous slide */
-  bacKeyCodes:     [75,  // k   
+  backKeyCodes:    [75,  // k
                     37,  // left arrow
                     33,  // Kensington presenter left arrow
                     8]   // delete
 };
-var Conman = function($,config) { 
+var ConmanLoader = function($,hljs,config) {
 
   /** Turn possibly-undefined into a function */
   var f = function(possibleFunction) {
@@ -94,7 +94,7 @@ var Conman = function($,config) {
         if (config.advanceKeycodes.indexOf(event.which) != -1) {
           Conman.advance();
         }
-        else if (config.bacKeyCodes.indexOf(event.which) != -1) {
+        else if (config.backKeyCodes.indexOf(event.which) != -1) {
           Conman.back();
         }
       });
@@ -166,6 +166,6 @@ var Conman = function($,config) {
       });
     }
   }
-}($,ConmanDefaultConfig);
+};
 // 66 - Kensington down/stop
 // 116 - Kensington up/laser
