@@ -37,7 +37,7 @@ command :build do |c|
     title  = parser.title
 
     erb = ERB.new(File.new(File.expand_path(File.join(File.dirname(__FILE__),'..','erb','index.html.erb'))).readlines.join(""))
-    File.open(global_options[:'output-file'],"w") do |file|
+    File.open(options[:'output-file'],"w") do |file|
       file.puts erb.result(binding)
     end
   end
