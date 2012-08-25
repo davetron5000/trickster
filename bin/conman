@@ -3,7 +3,6 @@
 require 'gli'
 require 'conman'
 require 'erb'
-require 'stringio'
 
 include GLI::App
 
@@ -19,70 +18,28 @@ command :init do |c|
   end
 end
 
-def write_slide(slide_type,content,slide)
-  content = content[0..-2] if content[-1] =~ /^\s*$/
-  slide.puts "<section class='#{slide_type}'>"
-  case slide_type
-  when "TITLE"
-    slide.puts "<h1>#{content[0]}</h1>"
-    slide.puts "<h2>#{content[1]}</h2>" unless content[1].nil?
-    slide.puts "<h3>#{content[2]}</h3>" unless content[2].nil?
-  when "SECTION"
-    slide.puts "<h1>#{content[0]}</h1>"
-    slide.puts "<h2>#{content[1]}</h2>" unless content[1].nil?
-    slide.puts "<h3>#{content[2]}</h3>" unless content[2].nil?
-  when "CODE"
-    if content[0] =~ /file:\/\/(.*$)/
-      content = File.open($1).readlines.map(&:chomp)
-    end
-    slide.puts "<pre><code class='ruby'>#{content[0]}"
-    content[1..-2].each { |line| slide.puts line }
-    slide.puts "#{content[-1]}</code></pre>"
-  when "BULLETS"
-    slide.puts "<h1>#{content[0]}</h1>"
-    slide.puts "<ul>"
-    slide.puts((content[1..-1].map { |_| "<li>" + _.gsub(/^[*+-o] /,'') + "</li>\n" }).join(""))
-    slide.puts "</ul>"
-  when "COMMANDLINE"
-    slide.puts "<pre><code>#{content.join("\n").gsub(">","&gt;")}</code></pre>"
-  when "IMAGE"
-    slide.puts "<img src='#{content[0]}'>"
-  else
-    slide.puts content.join("\n")
-  end
-  slide.puts "</section>"
-end
+desc          'File containing your slides'
+arg_name      "path"
+default_value "slides.md"
+flag          [:f,'slides-file']
 
 desc 'Generate the presentation from your slides'
 command :build do |c|
+  c.desc          'Name of the generated HTML file'
+  c.arg_name      'file'
+  c.default_value 'index.html'
+  c.flag          [:o,'output-file']
+
   c.action do |global_options,options,args|
-    content = []
-    slide_type = nil
-    body_io = StringIO.new
-    File.open("slides.md").readlines.each do |line|
-      line = line.chomp
-      if line =~/^!(.*)$/
-        write_slide(slide_type,content,body_io) unless slide_type.nil?
-        slide_type = $1
-        content = []
-      else
-        content << line
-      end
-    end
-    write_slide(slide_type,content,body_io)
-    body = body_io.string
-    title = "FOOBAR"
-    erb = ERB.new(File.new("erb/index.html.erb").readlines.join(""))
-    File.open("index.html","w") do |file|
+    lines  = File.open(global_options[:'slides-file']).readlines.map(&:chomp)
+    parser = Conman::SlideParser.new(lines,Conman::SlideRenderer.new)
+    body   = parser.body
+    title  = parser.title
+
+    erb = ERB.new(File.new(File.expand_path(File.join(File.dirname(__FILE__),'..','erb','index.html.erb'))).readlines.join(""))
+    File.open(global_options[:'output-file'],"w") do |file|
       file.puts erb.result(binding)
     end
-  end
-end
-
-desc 'Auto-generate your presentation whenever your slides change'
-command :watch do |c|
-  c.action do |global_options,options,args|
-    puts "watch command ran"
   end
 end
 
