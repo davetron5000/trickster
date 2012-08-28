@@ -40,7 +40,8 @@ describe("Conman",function() {
                 fadeIn: function(args) { calls.fadeIn = args; }
               };
             },
-            each: function(args) {}
+            each: function(args) {},
+            select: function(args) { return this; }
           };
         },
         syntaxHighlighter: function () {

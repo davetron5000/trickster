@@ -59,7 +59,8 @@ var ConmanLoader = function(config,functions) {
     load: function() {
       Conman.totalSlides = slides().length;
       Conman._initCurrentSlide();
-      Conman._initKeyBindings();
+      bindKeys(config.advanceKeycodes,Conman.advance);
+      bindKeys(config.backKeycodes,Conman.back);
       Conman._sizeAllToFit();
       Conman._slide().fadeIn(config.transitionTime / 2);
       syntaxHighlighter().highlight();
@@ -108,11 +109,6 @@ var ConmanLoader = function(config,functions) {
       }
     },
 
-    _initKeyBindings: function() {
-      bindKeys(config.advanceKeycodes,Conman.advance);
-      bindKeys(config.backKeycodes,Conman.back);
-    },
-
     _slide: function(whichSlide) {
       if (typeof whichSlide === "undefined") {
         whichSlide = Conman.currentSlide;
@@ -144,35 +140,66 @@ var ConmanLoader = function(config,functions) {
     },
 
     _sizeAllToFit: function() {
+      var width  = browserWindow().width;
+      var height = browserWindow().height;
 
-      var width  = browserWindow().width  - config.padding;
-      var height = browserWindow().height - config.padding;
+      var tooWide   = function(slide) { return slide.width() > width; };
+      var tooHigh   = function(slide) { return slide.height() > height; };
+      var tooNarrow = function(slide) { return (width - slide.width()) > config.padding; };
+      var tooShort  = function(slide) { return (height - slide.height()) > config.padding; };
 
-      slides().each(function(index,element) {
-        if (!($(element).attr("class").indexOf("IMAGE") != -1)) {
-        var fontSize = config.minFontSize;
+      var sizableElement = function(slide) {
+        // setting the size on the PRE or DIV creates a big top margin for some reason
+        if (slide.children().first()[0].tagName == "PRE") {
+          return slide.children().first().children().first();
+        }
+        else {
+          return slide;
+        }
+      };
+
+      var shouldResize = function(slide) {
+        return !(slide.attr("class").indexOf("IMAGE") != -1);
+      };
+
+      var resize = function(initialStep) {
+        var step = initialStep;
+        return function(slide,currentFontSize) {
+          element = sizableElement(slide);
+
+          var newFontSize = currentFontSize;
+          if (tooWide(slide) || tooHigh(slide)) {
+            newFontSize = currentFontSize - step;
+            step = step / 2;
+            if (step < 2) {
+              step = 2;
+            }
+          } else {
+            if (element[0].tagName == "CODE") {
+              if (tooNarrow(slide)) {
+                newFontSize = currentFontSize + step;
+              }
+            }
+            else {
+              if (tooNarrow(slide) || tooShort(slide)) {
+                newFontSize = currentFontSize + step;
+              }
+            }
+          }
+          element.css("font-size",newFontSize);
+          return newFontSize;
+        };
+      }(100);
+
+
+      slides().select(shouldResize).each(function(index,element) {
         var slide    = $(element);
+        var fontSize = resize(slide,config.minFontSize);
 
-        slide.css("font-size",fontSize);
-
-        while ((slide.width() < width) && (slide.height() < height)) {
-
-          fontSize = fontSize + 4;
-
-          // setting the size on the PRE or DIV creates a big top margin for some reason
-          if (slide.children().first()[0].tagName == "PRE") {
-            slide.children().first().children().first().css("font-size",fontSize);
-            slide.children().first().css("font-size",0);
-          }
-          else {
-            slide.css("font-size",fontSize);
-          }
-
-          if (fontSize > config.maxFontSize) { break; }
-        }
-        if ((slide.width < width) || (slide.height < height)) {
-          slide.css("font-size",fontSize - 2);
-        }
+        while (true) {
+          var newFontSize = resize(slide,fontSize);
+          if (newFontSize - fontSize < 1) { break; }
+          fontSize = newFontSize;
         }
       });
     }
