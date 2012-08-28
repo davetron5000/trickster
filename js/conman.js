@@ -13,23 +13,42 @@ var ConmanDefaultConfig = {
                     34,  // Kensington presenter right arrow
                     32], // space bar
   /** Keycodes that go back to the previous slide */
-  backKeyCodes:    [75,  // k
+  backKeycodes:    [75,  // k
                     37,  // left arrow
                     33,  // Kensington presenter left arrow
                     8]   // delete
 };
-var ConmanLoader = function($,hljs,config) {
-
-  /** Turn possibly-undefined into a function */
-  var f = function(possibleFunction) {
-    if (typeof possibleFunction != "undefined") {
-      return possibleFunction;
+/** Loads Conman.
+ * config: configuration, or ConmanDefaultConfig to get the defaults
+ * functions: override helper functions
+ */
+var ConmanLoader = function(config,functions) {
+  var slides = Utils.fOr(functions.slides,function() {
+    return $("section");
+  });
+  var browserWindow = Utils.fOr(functions.browserWindow,function() {
+    return {
+      width: $(window).width(),
+      height: $(window).height()
+    };
+  });
+  var keyboardBindings = Utils.fOr(functions.keyboardBindings,function() {
+    return $(window);
+  });
+  var syntaxHighlighter = Utils.fOr(functions.syntaxHighlighter,function() {
+    return {
+      highlight: function() {
+        hljs.initHighlightingOnLoad();
+      }
     }
-    else {
-      return function() {};
-    }
-  };
-
+  });
+  var bindKeys = Utils.fOr(functions.bindKeys,function(keyCodes,f) {
+    $(window).keyup(function(event) {
+      if (keyCodes.indexOf(event.which) != -1) {
+        f();
+      }
+    });
+  });
   return {
     /** State */
     currentSlide:  0,
@@ -38,12 +57,12 @@ var ConmanLoader = function($,hljs,config) {
 
     /** Set everything up for the slideshow */
     load: function() {
-      Conman.totalSlides = $("section").length;
+      Conman.totalSlides = slides().length;
       Conman._initCurrentSlide();
       Conman._initKeyBindings();
       Conman._sizeAllToFit();
       Conman._slide().fadeIn(config.transitionTime / 2);
-      hljs.initHighlightingOnLoad();
+      syntaxHighlighter().highlight();
     },
 
     /** Move forward one slide */
@@ -59,8 +78,8 @@ var ConmanLoader = function($,hljs,config) {
           nextSlide = 0;
         }
         Conman._changeSlides(nextSlide, function() {
-          currentSlide.find("li").each(function() {
-            $(this).css("visibility","hidden");
+          currentSlide.find("li").each(function(index,element) {
+            $(element).css("visibility","hidden");
           });
         })
       }
@@ -90,21 +109,15 @@ var ConmanLoader = function($,hljs,config) {
     },
 
     _initKeyBindings: function() {
-      $(window).keyup(function(event) {
-        if (config.advanceKeycodes.indexOf(event.which) != -1) {
-          Conman.advance();
-        }
-        else if (config.backKeyCodes.indexOf(event.which) != -1) {
-          Conman.back();
-        }
-      });
+      bindKeys(config.advanceKeycodes,Conman.advance);
+      bindKeys(config.backKeycodes,Conman.back);
     },
 
     _slide: function(whichSlide) {
       if (typeof whichSlide === "undefined") {
         whichSlide = Conman.currentSlide;
       }
-      return $("section").eq(whichSlide);
+      return slides().eq(whichSlide);
     },
 
     _bulletList: function() {
@@ -112,7 +125,7 @@ var ConmanLoader = function($,hljs,config) {
     },
 
     _changeSlides: function(nextSlide,afterChanges) {
-      afterChanges = f(afterChanges);
+      afterChanges = Utils.f(afterChanges);
       Conman._slide().fadeOut(config.transitionTime / 2, function() {
         Conman._slide(nextSlide).fadeIn(config.transitionTime / 2, function() {
           Conman.currentSlide = nextSlide;
@@ -120,10 +133,10 @@ var ConmanLoader = function($,hljs,config) {
           Conman.currentBullet = 0;
           if (Conman._slide().attr("class").indexOf("IMAGE") != -1) {
             var img    = Conman._slide().find("img");
-            var width  = $(window).width()  - config.padding;
-            var height = $(window).height() - config.padding;
-            if (img.height() > height) { img.height(height); }
-            if (img.width() > width) { img.width(width); }
+            var width  = browserWindow().width  - config.padding;
+            var height = browserWindow().height - config.padding;
+            if (img.height > height) { img.height(height); }
+            if (img.width > width) { img.width(width); }
           }
           afterChanges();
         });
@@ -132,15 +145,13 @@ var ConmanLoader = function($,hljs,config) {
 
     _sizeAllToFit: function() {
 
-      var width  = $(window).width()  - config.padding;
-      var height = $(window).height() - config.padding;
+      var width  = browserWindow().width  - config.padding;
+      var height = browserWindow().height - config.padding;
 
-      $("section").each(function() {
-        if ($(this).attr("class").indexOf("IMAGE") != -1) {
-        }
-        else {
+      slides().each(function(index,element) {
+        if (!($(element).attr("class").indexOf("IMAGE") != -1)) {
         var fontSize = config.minFontSize;
-        var slide    = $(this);
+        var slide    = $(element);
 
         slide.css("font-size",fontSize);
 
@@ -159,7 +170,7 @@ var ConmanLoader = function($,hljs,config) {
 
           if (fontSize > config.maxFontSize) { break; }
         }
-        if ((slide.width() < width) || (slide.height() < height)) {
+        if ((slide.width < width) || (slide.height < height)) {
           slide.css("font-size",fontSize - 2);
         }
         }

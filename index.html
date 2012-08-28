@@ -4,13 +4,14 @@
     <title>Serivces, Scale, Backgrounding and WTF is going on here?!??!</title>
     <script src="js/lib/jquery-1.8.0.min.js"></script>
     <script src="js/lib/highlight-7.1.min.js"></script>
+    <script src="js/utils.js"></script>
     <script src="js/conman.js"></script>
     <link rel="stylesheet" href="css/normalize.css">
     <link rel="stylesheet" href="css/highlight-solarized_light.min.css">
     <link rel="stylesheet" href="css/styles.css">
     <script>
       $(document).ready(function() {
-        Conman = ConmanLoader($,hljs,ConmanDefaultConfig);
+        Conman = ConmanLoader(ConmanDefaultConfig,{});
         Conman.load();
       });
     </script>
