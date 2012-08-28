@@ -140,14 +140,6 @@ var ConmanLoader = function(config,functions) {
     },
 
     _sizeAllToFit: function() {
-      var width  = browserWindow().width;
-      var height = browserWindow().height;
-
-      var tooWide   = function(slide) { return slide.width() > width; };
-      var tooHigh   = function(slide) { return slide.height() > height; };
-      var tooNarrow = function(slide) { return (width - slide.width()) > config.padding; };
-      var tooShort  = function(slide) { return (height - slide.height()) > config.padding; };
-
       var sizableElement = function(slide) {
         // setting the size on the PRE or DIV creates a big top margin for some reason
         if (slide.children().first()[0].tagName == "PRE") {
@@ -162,45 +154,9 @@ var ConmanLoader = function(config,functions) {
         return !(slide.attr("class").indexOf("IMAGE") != -1);
       };
 
-      var resize = function(initialStep) {
-        var step = initialStep;
-        return function(slide,currentFontSize) {
-          element = sizableElement(slide);
-
-          var newFontSize = currentFontSize;
-          if (tooWide(slide) || tooHigh(slide)) {
-            newFontSize = currentFontSize - step;
-            step = step / 2;
-            if (step < 2) {
-              step = 2;
-            }
-          } else {
-            if (element[0].tagName == "CODE") {
-              if (tooNarrow(slide)) {
-                newFontSize = currentFontSize + step;
-              }
-            }
-            else {
-              if (tooNarrow(slide) || tooShort(slide)) {
-                newFontSize = currentFontSize + step;
-              }
-            }
-          }
-          element.css("font-size",newFontSize);
-          return newFontSize;
-        };
-      }(100);
-
-
+      var sizeToFit = Sizer.sizeFunction(browserWindow().width,browserWindow().height,config.minFontSize);
       slides().select(shouldResize).each(function(index,element) {
-        var slide    = $(element);
-        var fontSize = resize(slide,config.minFontSize);
-
-        while (true) {
-          var newFontSize = resize(slide,fontSize);
-          if (newFontSize - fontSize < 1) { break; }
-          fontSize = newFontSize;
-        }
+        sizeToFit(sizableElement($(element)));
       });
     }
   }
