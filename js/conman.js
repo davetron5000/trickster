@@ -1,6 +1,6 @@
 var ConmanDefaultConfig = {
   /** Padding between max width and max font size */
-  padding:          164,
+  padding:          128,
   /** Don't make fonts bigger than this */
   maxFontSize:      500,
   /** Don't make fonts smaller than this */
@@ -143,7 +143,8 @@ var ConmanLoader = function(config,functions) {
       var sizableElement = function(slide) {
         // setting the size on the PRE or DIV creates a big top margin for some reason
         if (slide.children().first()[0].tagName == "PRE") {
-          return slide.children().first().children().first();
+          //return slide.children().first().children().first();
+          return slide;
         }
         else {
           return slide;
@@ -154,7 +155,7 @@ var ConmanLoader = function(config,functions) {
         return !(slide.attr("class").indexOf("IMAGE") != -1);
       };
 
-      var sizeToFit = Sizer.sizeFunction(browserWindow().width,browserWindow().height,config.minFontSize);
+      var sizeToFit = Sizer.sizeFunction(browserWindow().width,browserWindow().height,config.minFontSize,config.padding);
       slides().select(shouldResize).each(function(index,element) {
         sizeToFit(sizableElement($(element)));
       });

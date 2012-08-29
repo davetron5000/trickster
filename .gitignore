@@ -1,4 +1,6 @@
 doc
+src
+images
 html
 *.sw?
 pkg

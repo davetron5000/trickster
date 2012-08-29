@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title>FOO</title>
+    <title>Serivces, Scale, Backgrounding and WTF is going on here?!??!</title>
     <script src="js/lib/jquery-1.8.0.min.js"></script>
     <script src="js/lib/highlight-7.1.min.js"></script>
     <script src="js/utils.js"></script>
@@ -25,14 +25,588 @@
       }
     </style>
   </head>
-  <body>
-    <section class='CODE'>
-<pre><code class='ruby'>class Hello
-  def hi
-    puts "foo!"
+  <body><div id="contents">
+    <section class='TITLE'>
+<h1>Serivces, Scale, Backgrounding and WTF is going on here?!??!</h1>
+<h2>@davetron5000</h2>
+<h3>http://www.naildrivin5.com/blog</h3>
+</section>
+<section class='SECTION'>
+<h1>A story</h1>
+<h2>about reasonable developers and reasonable decisions</h2>
+<h3>creating a service-oriented architecture</h3>
+</section>
+<section class='SECTION'>
+<h1>LivingSocial</h1>
+</section>
+<section class='SECTION'>
+<h1>Tech Lead, Payments</h1>
+<h2>(i.e. the money)</h2>
+</section>
+<section class='CODE'>
+<pre><code class='ruby'>class PeopleController << ApplicationController
+  def create
+    @person = Person.create(params[:person])
+    if @person.valid?
+      UserMailer.send_welcome_email(person)
+      redirect_to people_path
+    else
+      flash[:error] = 'Invalid Data'
+      redirect_to new_person_path
+    end
   end
 end</code></pre>
 </section>
+<section class='BULLETS'>
+<h1>UX Problem</h1>
+<ul>
+<li>Enter my stuff</li>
+<li>Save to DB</li>
+<li>Wait for Mailer</li>
+<li>Get bored, leave</li>
+</ul>
+</section>
+<section class='SECTION'>
+<h1>I know&hellip;</h1>
+</section>
+<section class='SECTION'>
+<h1>I'll use</h1>
+<h2>Background Processing!</h2>
+</section>
+<section class='CODE'>
+<pre><code class='ruby'>def create
+  @person = Person.create(params[:person])
+  if @person.valid?
+    UserMailer.send_welcome_email(person)
+    redirect_to people_path
+  else
+     # ...
+  end
+end</code></pre>
+</section>
+<section class='CODE'>
+<pre><code class='ruby'>def create
+  @person = Person.create(params[:person])
+  if @person.valid?
+    Resque.enqueue(NewPersonEvent,:id => @person.id)
+    redirect_to people_path
+  else
+     # ...
+  end
+end</code></pre>
+</section>
+<section class='CODE'>
+<pre><code class='ruby'>class NewPersonEvent
+  def self.perform(id)
+    person = Person.find(id)
+    UserMailer.send_welcome_email(person)
+  end
+end</code></pre>
+</section>
+<section class='BULLETS'>
+<h1>A few months later&hellip;</h1>
+<ul>
+<li>Error from Production</li>
+<li>Timeout to Redis</li>
+<li>o_O</li>
+</ul>
+</section>
+<section class='CODE'>
+<pre><code class='ruby'>def create
+  @person = Person.create(params[:person])
+  if @person.valid?
+    Resque.enqueue(NewPersonEvent,:id => @person.id) # <-- BOOM
+    redirect_to people_path
+  else
+     # ...
+  end
+end</code></pre>
+</section>
+<section class='BULLETS'>
+<h1>Timeout to Redis</h1>
+<ul>
+<li>Person created</li>
+<li>but email wasn't sent</li>
+<li>Person can't be validated</li>
+<li>Unique email constraints anyone?</li>
+</ul>
+</section>
+<section class='COMMANDLINE'>
+<pre><code>&gt; bundle exec rails console production</code></pre>
+</section>
+<section class='BULLETS'>
+<h1>Solution</h1>
+<ul>
+<li>Person created and email sent</li>
+<li>or</li>
+<li>No email sent and no person created</li>
+<li>Transactions</li>
+</ul>
+</section>
+<section class='CODE'>
+<pre><code class='ruby'>def create
+  Person.transaction do
+    @person = Person.create(params[:person])
+    if @person.valid?
+      Resque.enqueue(NewPersonEvent,:id => @person.id)
+      redirect_to people_path
+    else
+       # ...
+    end
+  end
+end</code></pre>
+</section>
+<section class='SECTION'>
+<h1>A few weeks later&hellip;</h1>
+</section>
+<section class='SECTION'>
+<h1><code>ActiveRecord::NotFoundError</code></h1>
+</section>
+<section class='CODE'>
+<pre><code class='ruby'>class NewPersonEvent
+  def self.perform(id)
+    person = Person.find(id) # <-- BOOM
+    UserMailer.send_welcome_email(person)
+  end
+end</code></pre>
+</section>
+<section class='BULLETS'>
+<h1>WTF?</h1>
+<ul>
+<li>Got the id from the database</li>
+<li>Event created</li>
+<li>Event processed</li>
+<li>Transaction not yet committed</li>
+</ul>
+</section>
+<section class='CODE'>
+<pre><code class='ruby'>class NewPersonEvent
+  MAX_TRIES = 5
+  def self.perform(id)
+    tried = 0
+    person = Person.find_by_id(id)
+    while person.nil? && tried < MAX_TRIES
+      sleep(tried)
+      tried += 1
+      person = Person.find_by_id(id)
+    end
+    if person.nil?
+      raise "No such person with id #{id}"
+    else
+      UserMailer.send_welcome_email(person)
+    end
+  end
+end</code></pre>
+</section>
+<section class='CODE'>
+<pre><code class='ruby'>class NewPersonEvent
 
-  </body>
+  def self.perform(id)
+
+    person = Person.find_by_id(id)
+
+
+
+
+
+
+
+
+      UserMailer.send_welcome_email(person)
+
+  end
+end</code></pre>
+</section>
+<section class='CODE'>
+<pre><code class='ruby'>class NewPersonEvent
+  include ResqueRetryOTron7000
+  def self.perform(id)
+   
+    person = Person.find_by_id(id)
+    retry_on(-> { person.nil? }) do 
+
+
+
+
+
+
+
+
+      UserMailer.send_welcome_email(person)
+    end
+  end
+end</code></pre>
+</section>
+<section class='CODE'>
+<pre><code class='ruby'>class NewPersonEvent
+  include ResqueRetryOTron7000
+
+  def self.perform(id)
+    person = Person.find_by_id(id)
+    retry_on(-> { person.nil? }) do 
+      UserMailer.send_welcome_email(person)
+    end
+  end
+end</code></pre>
+</section>
+<section class='BULLETS'>
+<h1>Better(ish)</h1>
+<ul>
+<li>Likely to complete in 5 retries</li>
+<li>Can replay any that bubble up</li>
+</ul>
+</section>
+<section class='SECTION'>
+<h1>New Requirement</h1>
+</section>
+<section class='BULLETS'>
+<h1>Bulk Upload some Users</h1>
+<ul>
+<li>Send welcome emails</li>
+<li>Same business logic</li>
+</ul>
+</section>
+<section class='SECTION'>
+<h1>After we create a Person&hellip;</h1>
+<h2>&hellip;run our business logic</h2>
+</section>
+<section class='CODE'>
+<pre><code class='ruby'>class Person < ActiveRecord::Base
+  # ...
+
+  after_create :send_new_person_event
+
+  # ...
+
+private
+
+  def send_new_person_event
+    Resque.enqueue(NewPersonEvent,:id => @person.id)
+  end
+end</code></pre>
+</section>
+<section class='CODE'>
+<pre><code class='ruby'>def create
+  Person.transaction do
+    @person = Person.create(params[:person])
+    if @person.valid?
+      Resque.enqueue(NewPersonEvent,:id => @person.id)
+      redirect_to people_path
+    else
+       # ...
+    end
+  end
+end</code></pre>
+</section>
+<section class='CODE'>
+<pre><code class='ruby'>def create
+
+  @person = Person.create(params[:person])
+  if @person.valid?
+    redirect_to people_path
+  else
+     # ...
+  end
+
+end</code></pre>
+</section>
+<section class='BULLETS'>
+<h1>Reasonable</h1>
+<ul>
+<li>Other approaches exist</li>
+<li>Some might be better</li>
+<li>Nothing inherently wrong here</li>
+</ul>
+</section>
+<section class='CODE'>
+<pre><code class='ruby'># ab65765df - Added stats
+class Person < ActiveRecord::Base
+  # ...
+
+  after_create :send_new_person_event
+
+  # ...
+
+private
+
+  def send_new_person_event
+    Resque.enqueue(NewPersonEvent,:id => @person.id)
+    Stats.ping(:new_person)
+  end
+end</code></pre>
+</section>
+<section class='CODE'>
+<pre><code class='ruby'># 887ef0cf - Need to cache user names
+class Person < ActiveRecord::Base
+  # ...
+
+  after_create :send_new_person_event
+
+  # ...
+
+private
+
+  def send_new_person_event
+    Resque.enqueue(NewPersonEvent,:id => @person.id)
+    Stats.ping(:new_person)
+    PersonCache.put(:name,@person.id,@person.name)
+  end
+end</code></pre>
+</section>
+<section class='CODE'>
+<pre><code class='ruby'># 762dbda6 - Experimental AI
+class Person < ActiveRecord::Base
+  # ...
+
+  after_create :send_new_person_event
+
+  # ...
+
+private
+
+  def send_new_person_event
+    Resque.enqueue(NewPersonEvent,:id => @person.id)
+    Stats.ping(:new_person)
+    PersonCache.put(:name,@person.id,@person.name)
+    PetProject.frobnosticate(
+        HexDigest.md5_sha1_hash_rot13(@person.inspect))
+  end
+end</code></pre>
+</section>
+<section class='SECTION'>
+<h1>REASONABLE</h1>
+</section>
+<section class='TITLE'>
+<h1>More</h1>
+<h2>Services</h2>
+</section>
+<section class='BULLETS'>
+<h1>Mail</h1>
+<ul>
+<li>Mailers are Deprecated</li>
+<li>New Awesome Mail Service</li>
+<li>Just a Simple REST Call</li>
+</ul>
+</section>
+<section class='CODE'>
+<pre><code class='ruby'>class NewPersonEvent
+  include ResqueRetryOTron7000
+
+  def self.perform(id)
+    person = Person.find_by_id(id)
+    retry_on(-> { person.nil? }) do 
+      UserMailer.send_welcome_email(person)
+    end
+  end
+end</code></pre>
+</section>
+<section class='CODE'>
+<pre><code class='ruby'>class NewPersonEvent
+  include ResqueRetryOTron
+
+  def self.perform(id)
+    person = Person.find_by_id(id)
+    retry_on(-> { person.nil? }) do 
+      MailerService.mail(:send_welcome_email,person)
+    end
+  end
+end</code></pre>
+</section>
+<section class='SECTION'>
+<h1>Meanwhile&hellip;</h1>
+<h2>a Refactoring's afoot!</h2>
+</section>
+<section class='CODE'>
+<pre><code class='ruby'>def send_new_person_event
+  Resque.enqueue(NewPersonEvent,:id => @person.id)
+  Stats.ping(:new_person)
+  PersonCache.put(:name,@person.id,@person.name)
+  PetProject.frobnosticate(
+      HexDigest.md5_sha1_hash_rot13(@person.inspect))
+end</code></pre>
+</section>
+<section class='CODE'>
+<pre><code class='ruby'>def send_new_person_event
+  Resque.enqueue(NewPersonEvent,:id => @person.id)
+end</code></pre>
+</section>
+<section class='CODE'>
+<pre><code class='ruby'>def self.perform(id)
+  person = Person.find_by_id(id)
+  retry_on(-> { person.nil? }) do
+    MailerService.mail(:send_welcome_email,person)
+    Stats.ping(:new_person)
+    PersonCache.put(:name,@person.id,@person.name)
+    PetProject.frobnosticate(
+        HexDigest.md5_sha1_hash_rot13(@person.inspect))
+  end
+end</code></pre>
+</section>
+<section class='BULLETS'>
+<h1>An event fails!</h1>
+<ul>
+<li><pre><code>MailerService.mail(:send_welcome_email,person)</code></pre></li>
+<li><pre><code>Stats.ping(:new_person)</code></pre></li>
+<li><pre><code>PersonCache.put(:name,@person.id,@person.name)</code></pre></li>
+<li>BOOM</li>
+</ul>
+</section>
+<section class='BULLETS'>
+<h1>Just replay!</h1>
+<ul>
+<li><pre><code>MailerService.mail(:send_welcome_email,person) # Oops, second email</code></pre></li>
+<li><pre><code>Stats.ping(:new_person) # Oops, second ping</code></pre></li>
+<li><pre><code>PersonCache.put(:name,@person.id,@person.name) # FINALLY! </code></pre></li>
+<li>etc.</li>
+</ul>
+</section>
+<section class='SECTION'>
+<h1>MailService</h1>
+<h2>not idempotent</h2>
+</section>
+<section class='BULLETS'>
+<h1>Idempotent</h1>
+<ul>
+<li>Operation applied many times</li>
+<li>Only the first application has an effect</li>
+</ul>
+</section>
+<section class='CODE'>
+<pre><code class='ruby'># Before
+class MailerServiceController
+  def create
+    type = params[:mail_type] # e.g. :welcome_email
+    data = params[:data] # e.g. person
+    Mailers.find(type).mail(data)
+  end
+end</code></pre>
+</section>
+<section class='CODE'>
+<pre><code class='ruby'># After
+class MailerServiceController
+  def create
+    type       = params[:mail_type]
+    data       = params[:data]
+    request_id = params[:request_id]
+
+    if request = Request.find_by_request_id(request_id)
+      respond_with(request.results)
+    else
+      results = Mailers.find(type).mail(data)
+      respond_with(Request.create!(:request_id => request_id,
+                                   :results    => results).results)
+    end
+  end
+end</code></pre>
+</section>
+<section class='CODE'>
+<pre><code class='ruby'>def self.perform(id)
+  person = Person.find_by_id(id)
+  retry_on(-> { person.nil? }) do
+    mail_type = :send_welcome_email
+    MailerService.mail(
+      :send_welcome_email,
+      person,
+      :request_id => "#{mail_type}/#{@person.id}")
+
+    Stats.ping(:new_person)
+    PersonCache.put(:name,@person.id,@person.name)
+    PetProject.frobnosticate(
+        HexDigest.md5_sha1_hash_rot13(@person.inspect))
+  end
+end</code></pre>
+</section>
+<section class='BULLETS'>
+<h1>Call <code>mail</code> a zillion times</h1>
+<ul>
+<li>Only one mail sent&hellip;ever</li>
+<li>Same result goes back</li>
+</ul>
+</section>
+<section class='SECTION'>
+<h1>What if the mail fails at the gateway?</h1>
+</section>
+<section class='SECTION'>
+<h1>What if two requests come in at the same time?</h1>
+</section>
+<section class='SECTION'>
+<h1>What if my request ids clash?</h1>
+</section>
+<section class='IMAGE'>
+<img src='images/wtf.png'>
+</section>
+<section class='SECTION'>
+<h1>No system is perfect</h1>
+</section>
+<section class='TITLE'>
+<h1>What can you do?</h1>
+</section>
+<section class='SECTION'>
+<h1>Don't over-engineer</h1>
+</section>
+<section class='BULLETS'>
+<h1>1 - Historical Record</h1>
+<ul>
+<li>Log, log, log</li>
+<li>Sanity Check invariants</li>
+<li>Audit Activity</li>
+</ul>
+</section>
+<section class='BULLETS'>
+<h1>2 - Prevent Bad Data</h1>
+<ul>
+<li>Database constraints</li>
+<li>AR Validations cannot be trusted</li>
+<li>Fix bad data</li>
+</ul>
+</section>
+<section class='BULLETS'>
+<h1>3 - Fix Errors</h1>
+<ul>
+<li>Email <code>redalert@yourcompany.com</code></li>
+<li>Fix the problem</li>
+<li>Prevent the error</li>
+<li>Log warnings</li>
+</ul>
+</section>
+<section class='BULLETS'>
+<h1>4 - Monitor</h1>
+<ul>
+<li>Establish baseline for "normal"</li>
+<li>Alert outside of this baseline</li>
+<li>Refine</li>
+</ul>
+</section>
+<section class='BULLETS'>
+<h1>New Services</h1>
+<ul>
+<li>Prevent client "abuse"</li>
+<li>Design for Idempotence</li>
+</ul>
+</section>
+<section class='BULLETS'>
+<h1>Stop scratching your head</h1>
+<ul>
+<li>Record history</li>
+<li>Prevent bad data</li>
+<li>Fix errors</li>
+<li>Monitor</li>
+<li>Design for Disaster</li>
+</ul>
+</section>
+<section class='SECTION'>
+<h1>Does this sound fun?</h1>
+</section>
+<section class='SECTION'>
+<h1>We're Hiring</h1>
+</section>
+<section class='IMAGE'>
+<img src='images/book.png'>
+</section>
+<section class='TITLE'>
+<h1>Thank You!</h1>
+<h2>@davetron5000</h2>
+</section>
+
+  </div></body>
 </html>
