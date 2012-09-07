@@ -60,8 +60,55 @@ var ConmanLoader = function(config,functions) {
     return slides().eq(whichSlide);
   };
 
-  var bullets;
-  var conman = {
+  function initCurrentSlide() {
+    if (document.location.hash !== "") {
+      Conman.currentSlide = parseInt(document.location.hash.replace("#",""));
+    }
+  };
+
+  function changeSlides(nextSlide,afterChanges) {
+    afterChanges = Utils.f(afterChanges);
+    currentSlide().fadeOut(config.transitionTime / 2, function() {
+      currentSlide(nextSlide).fadeIn(config.transitionTime / 2, function() {
+        Conman.currentSlide = nextSlide;
+        window.history.replaceState({},"",document.URL.replace(/#.*$/,"") + "#" + Conman.currentSlide);
+        if (currentSlide().attr("class").indexOf("IMAGE") != -1) {
+          var img    = currentSlide().find("img");
+          var width  = browserWindow().width  - config.padding;
+          var height = browserWindow().height - config.padding;
+          if (img.height > height) { img.height(height); }
+          if (img.width > width) { img.width(width); }
+        }
+        afterChanges();
+      });
+    });
+  };
+
+  function sizeAllToFit() {
+    var sizableElement = function(slide) {
+      // setting the size on the PRE or DIV creates a big top margin for some reason
+      if (slide.children().first()[0].tagName == "PRE") {
+        //return slide.children().first().children().first();
+        return slide;
+      }
+      else {
+        return slide;
+      }
+    };
+
+    var shouldResize = function(slide) {
+      return !(slide.attr("class").indexOf("IMAGE") != -1);
+    };
+
+    var sizeToFit = Sizer.sizeFunction(browserWindow().width,browserWindow().height,config.minFontSize,config.padding);
+    slides().select(shouldResize).each(function(index,element) {
+      sizeToFit(sizableElement($(element)));
+    });
+  }
+
+
+  var bullets = ConmanBullets(currentSlide,config);
+  return {
     /** State */
     currentSlide:  0,
     totalSlides:   1,
@@ -69,12 +116,12 @@ var ConmanLoader = function(config,functions) {
     /** Set everything up for the slideshow */
     load: function() {
       Conman.totalSlides = slides().length;
-      Conman._initCurrentSlide();
+      initCurrentSlide();
       bindKeys(config.advanceKeycodes,Conman.advance);
       bindKeys(config.backKeycodes,Conman.back);
       bindKeys([189],Conman.shrink);
       bindKeys([187],Conman.embiggen);
-      Conman._sizeAllToFit();
+      sizeAllToFit();
       currentSlide().fadeIn(config.transitionTime / 2);
       syntaxHighlighter().highlight();
     },
@@ -100,7 +147,7 @@ var ConmanLoader = function(config,functions) {
         if (nextSlide >= Conman.totalSlides) {
           nextSlide = 0;
         }
-        Conman._changeSlides(nextSlide, bullets.rehideBullets());
+        changeSlides(nextSlide, bullets.rehideBullets());
       }
     },
 
@@ -110,58 +157,9 @@ var ConmanLoader = function(config,functions) {
       if (nextSlide < 0) {
         nextSlide = Conman.totalSlides - 1;
       }
-      Conman._changeSlides(nextSlide, bullets.rehideBullets());
-    },
-
-    /** Private functions **/
-    _initCurrentSlide: function() {
-      if (document.location.hash !== "") {
-        Conman.currentSlide = parseInt(document.location.hash.replace("#",""));
-      }
-    },
-
-    _changeSlides: function(nextSlide,afterChanges) {
-      afterChanges = Utils.f(afterChanges);
-      currentSlide().fadeOut(config.transitionTime / 2, function() {
-        currentSlide(nextSlide).fadeIn(config.transitionTime / 2, function() {
-          Conman.currentSlide = nextSlide;
-          window.history.replaceState({},"",document.URL.replace(/#.*$/,"") + "#" + Conman.currentSlide);
-          if (currentSlide().attr("class").indexOf("IMAGE") != -1) {
-            var img    = currentSlide().find("img");
-            var width  = browserWindow().width  - config.padding;
-            var height = browserWindow().height - config.padding;
-            if (img.height > height) { img.height(height); }
-            if (img.width > width) { img.width(width); }
-          }
-          afterChanges();
-        });
-      });
-    },
-
-    _sizeAllToFit: function() {
-      var sizableElement = function(slide) {
-        // setting the size on the PRE or DIV creates a big top margin for some reason
-        if (slide.children().first()[0].tagName == "PRE") {
-          //return slide.children().first().children().first();
-          return slide;
-        }
-        else {
-          return slide;
-        }
-      };
-
-      var shouldResize = function(slide) {
-        return !(slide.attr("class").indexOf("IMAGE") != -1);
-      };
-
-      var sizeToFit = Sizer.sizeFunction(browserWindow().width,browserWindow().height,config.minFontSize,config.padding);
-      slides().select(shouldResize).each(function(index,element) {
-        sizeToFit(sizableElement($(element)));
-      });
+      changeSlides(nextSlide, bullets.rehideBullets());
     }
-  }
-  bullets = ConmanBullets(currentSlide,config);
-  return conman;
+  };
 };
 // 66 - Kensington down/stop
 // 116 - Kensington up/laser
