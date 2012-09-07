@@ -38,6 +38,7 @@ var ConmanLoader = function(config,functions) {
   var syntaxHighlighter = Utils.fOr(functions.syntaxHighlighter,function() {
     return {
       highlight: function() {
+        hljs.lineNodes = true;
         hljs.initHighlightingOnLoad();
       }
     }
@@ -61,9 +62,22 @@ var ConmanLoader = function(config,functions) {
       Conman._initCurrentSlide();
       bindKeys(config.advanceKeycodes,Conman.advance);
       bindKeys(config.backKeycodes,Conman.back);
+      bindKeys([189],Conman.shrink);
+      bindKeys([187],Conman.embiggen);
       Conman._sizeAllToFit();
       Conman._slide().fadeIn(config.transitionTime / 2);
       syntaxHighlighter().highlight();
+    },
+
+    /** Reduce the font-size of the current slide slightly */
+    shrink: function() {
+      var currentSize = parseInt(Conman._slide().css("font-size"));
+      Conman._slide().css("font-size",currentSize - 4);
+    },
+    /** Increase the font-size of the current slide slightly */
+    embiggen: function() {
+      var currentSize = parseInt(Conman._slide().css("font-size"));
+      Conman._slide().css("font-size",currentSize + 4);
     },
 
     /** Move forward one slide */

@@ -16,6 +16,7 @@ module Conman
   private
 
     def write_slide(slide_type,content,slide)
+      slide_type,options = slide_type.split(/:/)
       content = content[0..-2] if content[-1] =~ /^\s*$/
       slide.puts "<section class='#{slide_type}'>"
       case slide_type
@@ -28,10 +29,14 @@ module Conman
         slide.puts "<h2>#{content[1]}</h2>" unless content[1].nil?
         slide.puts "<h3>#{content[2]}</h3>" unless content[2].nil?
       when "CODE"
+        callouts = ''
+        if options =~ /callout=([^\s]+)/
+          callouts = $1
+        end
         if content[0] =~ /file:\/\/(.*$)/
           content = File.open($1).readlines.map(&:chomp)
         end
-        slide.puts "<pre><code class='ruby'>#{content[0]}"
+        slide.puts "<pre><code class='ruby' data-callout-lines='#{callouts}'>#{content[0]}"
         content[1..-2].each { |line| slide.puts line }
         slide.puts "#{content[-1]}</code></pre>"
       when "BULLETS"
