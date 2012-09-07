@@ -5,7 +5,6 @@ describe("Conman",function() {
   it("has a reasonable initial state", function() {
     Conman = ConmanLoader(ConmanDefaultConfig,{});
     expect(Conman.currentSlide).toBe(0);
-    expect(Conman.currentBullet).toBe(0);
     expect(Conman.totalSlides).toBe(1);
   });
 

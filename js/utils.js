@@ -1,6 +1,6 @@
 var Utils = function() {
   /** If possibleFunction is undefined, use otherFunction */
-  var fOr = function(possibleFunction,otherFunction) {
+  function fOr(possibleFunction,otherFunction) {
     if (typeof possibleFunction != "undefined") {
       return possibleFunction;
     }
@@ -9,7 +9,7 @@ var Utils = function() {
     }
   };
   /** Turn possibly-undefined into a function */
-  var f = function(possibleFunction) {
+  function f(possibleFunction) {
     return fOr(possibleFunction,function() {});
   };
   return {

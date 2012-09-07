@@ -52,6 +52,14 @@ var ConmanLoader = function(config,functions) {
       }
     });
   });
+
+  function currentSlide(whichSlide) {
+    if (typeof whichSlide === "undefined") {
+      whichSlide = Conman.currentSlide;
+    }
+    return slides().eq(whichSlide);
+  };
+
   var bullets;
   var conman = {
     /** State */
@@ -67,19 +75,19 @@ var ConmanLoader = function(config,functions) {
       bindKeys([189],Conman.shrink);
       bindKeys([187],Conman.embiggen);
       Conman._sizeAllToFit();
-      Conman._slide().fadeIn(config.transitionTime / 2);
+      currentSlide().fadeIn(config.transitionTime / 2);
       syntaxHighlighter().highlight();
     },
 
     /** Reduce the font-size of the current slide slightly */
     shrink: function() {
-      var currentSize = parseInt(Conman._slide().css("font-size"));
-      Conman._slide().css("font-size",currentSize - 4);
+      var currentSize = parseInt(currentSlide().css("font-size"));
+      currentSlide().css("font-size",currentSize - 4);
     },
     /** Increase the font-size of the current slide slightly */
     embiggen: function() {
-      var currentSize = parseInt(Conman._slide().css("font-size"));
-      Conman._slide().css("font-size",currentSize + 4);
+      var currentSize = parseInt(currentSlide().css("font-size"));
+      currentSlide().css("font-size",currentSize + 4);
     },
 
     /** Move forward one slide */
@@ -102,7 +110,7 @@ var ConmanLoader = function(config,functions) {
       if (nextSlide < 0) {
         nextSlide = Conman.totalSlides - 1;
       }
-      Conman._changeSlides(nextSlide);
+      Conman._changeSlides(nextSlide, bullets.rehideBullets());
     },
 
     /** Private functions **/
@@ -112,21 +120,14 @@ var ConmanLoader = function(config,functions) {
       }
     },
 
-    _slide: function(whichSlide) {
-      if (typeof whichSlide === "undefined") {
-        whichSlide = Conman.currentSlide;
-      }
-      return slides().eq(whichSlide);
-    },
-
     _changeSlides: function(nextSlide,afterChanges) {
       afterChanges = Utils.f(afterChanges);
-      Conman._slide().fadeOut(config.transitionTime / 2, function() {
-        Conman._slide(nextSlide).fadeIn(config.transitionTime / 2, function() {
+      currentSlide().fadeOut(config.transitionTime / 2, function() {
+        currentSlide(nextSlide).fadeIn(config.transitionTime / 2, function() {
           Conman.currentSlide = nextSlide;
           window.history.replaceState({},"",document.URL.replace(/#.*$/,"") + "#" + Conman.currentSlide);
-          if (Conman._slide().attr("class").indexOf("IMAGE") != -1) {
-            var img    = Conman._slide().find("img");
+          if (currentSlide().attr("class").indexOf("IMAGE") != -1) {
+            var img    = currentSlide().find("img");
             var width  = browserWindow().width  - config.padding;
             var height = browserWindow().height - config.padding;
             if (img.height > height) { img.height(height); }
@@ -159,7 +160,7 @@ var ConmanLoader = function(config,functions) {
       });
     }
   }
-  bullets = ConmanBullets(conman._slide,config);
+  bullets = ConmanBullets(currentSlide,config);
   return conman;
 };
 // 66 - Kensington down/stop
