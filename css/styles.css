@@ -9,8 +9,22 @@ section.BULLETS h1 {
 }
 section.COMMANDLINE code {
   background: black;
-  color: green;
+  color: #00ff00;
 }
+
+section.COMMANDLINE .cli-element {
+  display: none;
+}
+
+section.COMMANDLINE .cli-prompt {
+  font-weight: bold;
+  color: white;
+}
+
+section.COMMANDLINE .cli-command {
+  color: #00ffff;
+}
+
 code {
   border-radius: 30px;
 }

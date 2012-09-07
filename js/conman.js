@@ -7,7 +7,9 @@ var ConmanDefaultConfig = {
   minFontSize:      30,
   /** Time, in ms, to transition between slides */
   transitionTime:   200,
-  /** Keycodes that advacne to the next slide */
+  /** Time, in ms, that it should take to type each command */
+  typingTime:       1000,
+  /** Keycodes that advance to the next slide */
   advanceKeycodes: [74,  // j
                     39,  // right arrow
                     34,  // Kensington presenter right arrow
@@ -82,21 +84,15 @@ var ConmanLoader = function(config,functions) {
 
     /** Move forward one slide */
     advance: function() {
-      var currentSlide = Conman._slide();
-      if (Conman._advanceBullet()) {
-        Conman._nextBullet().css("visibility","visible");
-        Conman.currentBullet = Conman.currentBullet + 1;
+      if (Conman._hasBulletsToAdvanceFirst()) {
+        Conman._advanceToNextBullet();
       }
       else {
         var nextSlide = Conman.currentSlide + 1;
         if (nextSlide >= Conman.totalSlides) {
           nextSlide = 0;
         }
-        Conman._changeSlides(nextSlide, function() {
-          currentSlide.find("li").each(function(index,element) {
-            $(element).css("visibility","hidden");
-          });
-        })
+        Conman._changeSlides(nextSlide, Conman._rehideBullets());
       }
     },
 
@@ -109,14 +105,71 @@ var ConmanLoader = function(config,functions) {
       Conman._changeSlides(nextSlide);
     },
 
+    BULLET_SELECTORS: ["li",".cli-element"],
+
     /** Private functions **/
-    _advanceBullet: function() {
-      return Conman._bulletList() && Conman.currentBullet < Conman._slide().find("li").size()
+    _hasBulletsToAdvanceFirst: function() {
+      return Conman._hasBullets() && Conman.currentBullet < Conman._numBullets();
+    },
+
+    _bulletsSelectedBy: function(selector) {
+      return Conman._slide().children().find(selector).size() > 0;
+    },
+
+    _numBullets: function() {
+      return Conman._bullets().size();
+    },
+
+    _hasBullets: function() {
+      return _.any(Conman.BULLET_SELECTORS,Conman._bulletsSelectedBy);
+    },
+
+    _bullets: function() {
+      return Conman._slide().children().find(_.find(Conman.BULLET_SELECTORS,Conman._bulletsSelectedBy));
     },
 
     _nextBullet: function() {
-      return Conman._slide().find("li").eq(Conman.currentBullet);
+      return Conman._bullets().eq(Conman.currentBullet);
     },
+
+    _advanceToNextBullet: function() {
+      var nextBullet = Conman._nextBullet();
+      if (nextBullet[0].tagName == "LI") {
+        nextBullet.css("visibility","visible");
+      }
+      else if (nextBullet.hasClass("cli-element")) {
+        if (nextBullet.hasClass("cli-command")) {
+          var delay = Math.round(config.typingTime / nextBullet.text().length);
+          if (delay < 20) {
+            delay = 20;
+          }
+          nextBullet.typewrite({ 
+            delay: delay,
+            callback: function() {
+              if (Conman._hasBulletsToAdvanceFirst()) {
+                Conman._advanceToNextBullet();
+              }
+            }
+          });
+        }
+        else {
+          nextBullet.fadeIn(config.transitionTime);
+        }
+      }
+      Conman.currentBullet = Conman.currentBullet + 1;
+    },
+
+    _rehideBullets: function() {
+      Conman._bullets().each(function(index,element) {
+        if (element.tagName == "LI") {
+          $(element).css("visibility","hidden");
+        }
+        else if ($(element).hasClass("cli-element")) {
+          $(element).css("display","none");
+        }
+      });
+    },
+
     _initCurrentSlide: function() {
       if (document.location.hash !== "") {
         Conman.currentSlide = parseInt(document.location.hash.replace("#",""));
@@ -128,10 +181,6 @@ var ConmanLoader = function(config,functions) {
         whichSlide = Conman.currentSlide;
       }
       return slides().eq(whichSlide);
-    },
-
-    _bulletList: function() {
-      return Conman._slide().children().find("li").size() > 0;
     },
 
     _changeSlides: function(nextSlide,afterChanges) {

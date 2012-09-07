@@ -45,7 +45,16 @@ module Conman
         slide.puts((content[1..-1].map { |_| "<li>" + _.gsub(/^[*+-o] /,'') + "</li>\n" }).join(""))
         slide.puts "</ul>"
       when "COMMANDLINE"
-        slide.puts "<pre><code>#{content.join("\n").gsub(">","&gt;")}</code></pre>"
+        slide.print "<pre><code class='no-highlight'>"
+        content.each do |line|
+          if line =~ /^([>%])/
+            prompt = $1.gsub(">","&gt;")
+            slide.puts "<span class='cli-prompt'>#{prompt}</span><span class='cli-element cli-command'>#{line[1..-1].gsub(">","&gt;")}</span>"
+          else
+            slide.puts "<span class='cli-element cli-result'>#{line}</span>"
+          end
+        end
+        slide.puts "</code></pre>"
       when "IMAGE"
         slide.puts "<img src='#{content[0]}'>"
       else
