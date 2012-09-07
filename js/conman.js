@@ -52,11 +52,11 @@ var ConmanLoader = function(config,functions) {
       }
     });
   });
-  return {
+  var bullets;
+  var conman = {
     /** State */
     currentSlide:  0,
     totalSlides:   1,
-    currentBullet: 0,
 
     /** Set everything up for the slideshow */
     load: function() {
@@ -84,15 +84,15 @@ var ConmanLoader = function(config,functions) {
 
     /** Move forward one slide */
     advance: function() {
-      if (Conman._hasBulletsToAdvanceFirst()) {
-        Conman._advanceToNextBullet();
+      if (bullets.hasBulletsToAdvanceFirst()) {
+        bullets.advanceToNextBullet();
       }
       else {
         var nextSlide = Conman.currentSlide + 1;
         if (nextSlide >= Conman.totalSlides) {
           nextSlide = 0;
         }
-        Conman._changeSlides(nextSlide, Conman._rehideBullets());
+        Conman._changeSlides(nextSlide, bullets.rehideBullets());
       }
     },
 
@@ -105,71 +105,7 @@ var ConmanLoader = function(config,functions) {
       Conman._changeSlides(nextSlide);
     },
 
-    BULLET_SELECTORS: ["li",".cli-element"],
-
     /** Private functions **/
-    _hasBulletsToAdvanceFirst: function() {
-      return Conman._hasBullets() && Conman.currentBullet < Conman._numBullets();
-    },
-
-    _bulletsSelectedBy: function(selector) {
-      return Conman._slide().children().find(selector).size() > 0;
-    },
-
-    _numBullets: function() {
-      return Conman._bullets().size();
-    },
-
-    _hasBullets: function() {
-      return _.any(Conman.BULLET_SELECTORS,Conman._bulletsSelectedBy);
-    },
-
-    _bullets: function() {
-      return Conman._slide().children().find(_.find(Conman.BULLET_SELECTORS,Conman._bulletsSelectedBy));
-    },
-
-    _nextBullet: function() {
-      return Conman._bullets().eq(Conman.currentBullet);
-    },
-
-    _advanceToNextBullet: function() {
-      var nextBullet = Conman._nextBullet();
-      if (nextBullet[0].tagName == "LI") {
-        nextBullet.css("visibility","visible");
-      }
-      else if (nextBullet.hasClass("cli-element")) {
-        if (nextBullet.hasClass("cli-command")) {
-          var delay = Math.round(config.typingTime / nextBullet.text().length);
-          if (delay < 20) {
-            delay = 20;
-          }
-          nextBullet.typewrite({ 
-            delay: delay,
-            callback: function() {
-              if (Conman._hasBulletsToAdvanceFirst()) {
-                Conman._advanceToNextBullet();
-              }
-            }
-          });
-        }
-        else {
-          nextBullet.fadeIn(config.transitionTime);
-        }
-      }
-      Conman.currentBullet = Conman.currentBullet + 1;
-    },
-
-    _rehideBullets: function() {
-      Conman._bullets().each(function(index,element) {
-        if (element.tagName == "LI") {
-          $(element).css("visibility","hidden");
-        }
-        else if ($(element).hasClass("cli-element")) {
-          $(element).css("display","none");
-        }
-      });
-    },
-
     _initCurrentSlide: function() {
       if (document.location.hash !== "") {
         Conman.currentSlide = parseInt(document.location.hash.replace("#",""));
@@ -189,7 +125,6 @@ var ConmanLoader = function(config,functions) {
         Conman._slide(nextSlide).fadeIn(config.transitionTime / 2, function() {
           Conman.currentSlide = nextSlide;
           window.history.replaceState({},"",document.URL.replace(/#.*$/,"") + "#" + Conman.currentSlide);
-          Conman.currentBullet = 0;
           if (Conman._slide().attr("class").indexOf("IMAGE") != -1) {
             var img    = Conman._slide().find("img");
             var width  = browserWindow().width  - config.padding;
@@ -224,6 +159,8 @@ var ConmanLoader = function(config,functions) {
       });
     }
   }
+  bullets = ConmanBullets(conman._slide,config);
+  return conman;
 };
 // 66 - Kensington down/stop
 // 116 - Kensington up/laser
