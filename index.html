@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title>Serivces, Scale, Backgrounding and WTF is going on here?!??!</title>
+    <title>Services, Scale, Backgrounding and WTF is going on here?!??!</title>
     <script src="js/lib/jquery-1.8.0.min.js"></script>
     <script src="js/lib/highlight-fc32801.min.js"></script>
     <script src="js/lib/jquerytypewriter.js"></script>
@@ -24,24 +24,27 @@
     </script>
   </head>
   <body><div id="contents">
-    <section class='TITLE'>
-<h1>Serivces, Scale, Backgrounding and WTF is going on here?!??!</h1>
+    <section class='TITLE' >
+<h1>Services, Scale, Backgrounding and WTF is going on here?!??!</h1>
 <h2>@davetron5000</h2>
 <h3>http://www.naildrivin5.com/blog</h3>
 </section>
-<section class='SECTION'>
+<section class='NORMAL' >
 <h1>A story</h1>
 <h2>about reasonable developers and reasonable decisions</h2>
 <h3>creating a service-oriented architecture</h3>
 </section>
-<section class='SECTION'>
-<h1>LivingSocial</h1>
+<section class='IMAGE' data-background='262626' >
+<img src='images/LSLogo.jpg'>
 </section>
-<section class='SECTION'>
+<section class='NORMAL' >
 <h1>Tech Lead, Payments</h1>
 <h2>(i.e. the money)</h2>
 </section>
-<section class='CODE'>
+<section class='SECTION' >
+<h1>Our story begins&hellip;</h1>
+</section>
+<section class='CODE' >
 <pre><code class='ruby' data-strikeouts='' data-callout-lines=''>class PeopleController << ApplicationController
   def create
     @person = Person.create(params[:person])
@@ -55,7 +58,7 @@
   end
 end</code></pre>
 </section>
-<section class='BULLETS'>
+<section class='BULLETS' >
 <h1>UX Problem</h1>
 <ul>
 <li>Enter my stuff</li>
@@ -64,11 +67,10 @@ end</code></pre>
 <li>Wasted Proccessor Time</li>
 </ul>
 </section>
-<section class='SECTION'>
+<section class='SECTION' >
 <h1>Background Processing!</h1>
-<h2></h2>
 </section>
-<section class='CODE'>
+<section class='CODE' >
 <pre><code class='ruby' data-strikeouts='' data-callout-lines='4'>def create
   @person = Person.create(params[:person])
   if @person.valid?
@@ -79,7 +81,7 @@ end</code></pre>
   end
 end</code></pre>
 </section>
-<section class='CODE'>
+<section class='CODE' >
 <pre><code class='ruby' data-strikeouts='' data-callout-lines=''>class NewPersonEvent
   def self.perform(id)
     person = Person.find(id)
@@ -87,10 +89,10 @@ end</code></pre>
   end
 end</code></pre>
 </section>
-<section class='SECTION'>
+<section class='SECTION' >
 <h1>A few months later&hellip;</h1>
 </section>
-<section class='CODE'>
+<section class='CODE' >
 <pre><code class='ruby' data-strikeouts='' data-callout-lines='4'>def create
   @person = Person.create(params[:person])
   if @person.valid?
@@ -100,7 +102,7 @@ end</code></pre>
   end
 end</code></pre>
 </section>
-<section class='BULLETS'>
+<section class='BULLETS' >
 <h1>Timeout to Redis</h1>
 <ul>
 <li>Person record created&hellip;</li>
@@ -109,12 +111,12 @@ end</code></pre>
 <li>Unique email constraints anyone?</li>
 </ul>
 </section>
-<section class='COMMANDLINE'>
+<section class='COMMANDLINE' >
 <pre><code class='no-highlight'><span class='cli-prompt'>&gt;</span> <span class='cli-element cli-command'> bundle exec rails console production</span>
 <span class='cli-element cli-result'>irb> has_a_sad</span>
 </code></pre>
 </section>
-<section class='BULLETS'>
+<section class='BULLETS' >
 <h1>Solution</h1>
 <ul>
 <li>Person created and email sent</li>
@@ -123,7 +125,7 @@ end</code></pre>
 <li>Transactions</li>
 </ul>
 </section>
-<section class='CODE'>
+<section class='CODE' >
 <pre><code class='ruby' data-strikeouts='' data-callout-lines='2,9'>def create
   Person.transaction do
     @person = Person.create(params[:person])
@@ -136,10 +138,10 @@ end</code></pre>
   end
 end</code></pre>
 </section>
-<section class='SECTION'>
+<section class='SECTION' >
 <h1>A few weeks later&hellip;</h1>
 </section>
-<section class='CODE'>
+<section class='CODE' >
 <pre><code class='ruby' data-strikeouts='' data-callout-lines='3'>class NewPersonEvent
   def self.perform(id)
     person = Person.find(id) #! ActiveRecord::NotFoundError
@@ -147,7 +149,7 @@ end</code></pre>
   end
 end</code></pre>
 </section>
-<section class='BULLETS'>
+<section class='BULLETS' >
 <h1>WTF?</h1>
 <ul>
 <li>Got the id from the database</li>
@@ -156,7 +158,7 @@ end</code></pre>
 <li>Transaction not yet committed</li>
 </ul>
 </section>
-<section class='CODE'>
+<section class='CODE' >
 <pre><code class='ruby' data-strikeouts='' data-callout-lines=''>class NewPersonEvent
 
 
@@ -169,7 +171,7 @@ end</code></pre>
   end
 end</code></pre>
 </section>
-<section class='CODE'>
+<section class='CODE' >
 <pre><code class='ruby' data-strikeouts='' data-callout-lines='2,6,7,9'>class NewPersonEvent
   include ResqueRetryOTron7000
 
@@ -182,28 +184,28 @@ end</code></pre>
   end
 end</code></pre>
 </section>
-<section class='BULLETS'>
+<section class='BULLETS' >
 <h1>Better(ish)</h1>
 <ul>
 <li>Likely to complete in 5 retries</li>
 <li>Can replay any that bubble up</li>
 </ul>
 </section>
-<section class='SECTION'>
-<h1>New Requirement</h1>
+<section class='SECTION' >
+<h1>Acquisition</h1>
 </section>
-<section class='BULLETS'>
+<section class='BULLETS' >
 <h1>Bulk Upload some Users</h1>
 <ul>
 <li>Send welcome emails</li>
 <li>Same business logic</li>
 </ul>
 </section>
-<section class='SECTION'>
+<section class='NORMAL' >
 <h1>After we create a Person&hellip;</h1>
 <h2>&hellip;run our business logic</h2>
 </section>
-<section class='CODE'>
+<section class='CODE' >
 <pre><code class='ruby' data-strikeouts='' data-callout-lines='4,11'>class Person < ActiveRecord::Base
   # ...
 
@@ -218,7 +220,7 @@ private
   end
 end</code></pre>
 </section>
-<section class='CODE'>
+<section class='CODE' >
 <pre><code class='ruby' data-strikeouts='2,10' data-callout-lines='2,10'>def create
   Person.transaction do
     @person = Person.create(params[:person])
@@ -231,7 +233,7 @@ end</code></pre>
   end
 end</code></pre>
 </section>
-<section class='CODE'>
+<section class='CODE' >
 <pre><code class='ruby' data-strikeouts='' data-callout-lines=''>def create
   @person = Person.create(params[:person])
   if @person.valid?
@@ -241,7 +243,7 @@ end</code></pre>
   end
 end</code></pre>
 </section>
-<section class='BULLETS'>
+<section class='BULLETS' >
 <h1>Reasonable</h1>
 <ul>
 <li>Other approaches exist</li>
@@ -249,7 +251,7 @@ end</code></pre>
 <li>Nothing inherently wrong here</li>
 </ul>
 </section>
-<section class='CODE'>
+<section class='CODE' >
 <pre><code class='ruby' data-strikeouts='' data-callout-lines='13'># ab65765df - Added stats
 class Person < ActiveRecord::Base
   # ...
@@ -266,7 +268,7 @@ private
   end
 end</code></pre>
 </section>
-<section class='CODE'>
+<section class='CODE' >
 <pre><code class='ruby' data-strikeouts='' data-callout-lines='14'># 887ef0cf - Need to cache user names
 class Person < ActiveRecord::Base
   # ...
@@ -284,7 +286,7 @@ private
   end
 end</code></pre>
 </section>
-<section class='CODE'>
+<section class='CODE' >
 <pre><code class='ruby' data-strikeouts='' data-callout-lines='15,16'># 762dbda6 - Experimental AI
 class Person < ActiveRecord::Base
   # ...
@@ -304,14 +306,14 @@ private
   end
 end</code></pre>
 </section>
-<section class='SECTION'>
+<section class='NORMAL' >
 <h1>REASONABLE</h1>
 </section>
-<section class='TITLE'>
+<section class='SECTION' >
 <h1>More</h1>
 <h2>Services</h2>
 </section>
-<section class='BULLETS'>
+<section class='BULLETS' >
 <h1>Mail</h1>
 <ul>
 <li>Mailers are Deprecated</li>
@@ -319,7 +321,7 @@ end</code></pre>
 <li>Just a Simple REST Call</li>
 </ul>
 </section>
-<section class='CODE'>
+<section class='CODE' >
 <pre><code class='ruby' data-strikeouts='' data-callout-lines='8'>class NewPersonEvent
   include ResqueRetryOTron
 
@@ -332,11 +334,11 @@ end</code></pre>
   end
 end</code></pre>
 </section>
-<section class='SECTION'>
+<section class='NORMAL' >
 <h1>Meanwhile&hellip;</h1>
 <h2>a Refactoring's afoot!</h2>
 </section>
-<section class='CODE'>
+<section class='CODE' >
 <pre><code class='ruby' data-strikeouts='' data-callout-lines='3,4,5,6'>def send_new_person_event
   Resque.enqueue(NewPersonEvent,:id => @person.id)
   Stats.ping(:new_person)
@@ -345,12 +347,12 @@ end</code></pre>
       HexDigest.md5_sha1_hash_rot13(@person.inspect))
 end</code></pre>
 </section>
-<section class='CODE'>
+<section class='CODE' >
 <pre><code class='ruby' data-strikeouts='' data-callout-lines=''>def send_new_person_event
   Resque.enqueue(NewPersonEvent,:id => @person.id)
 end</code></pre>
 </section>
-<section class='CODE'>
+<section class='CODE' >
 <pre><code class='ruby' data-strikeouts='' data-callout-lines='6,7,8,9'>def self.perform(id)
   person = Person.find_by_id(id)
   retry_on(:times => 5,
@@ -363,7 +365,7 @@ end</code></pre>
   end
 end</code></pre>
 </section>
-<section class='BULLETS'>
+<section class='BULLETS' >
 <h1>An event fails!</h1>
 <ul>
 <li><pre><code class="no-highlight">MailerService.mail(:send_welcome_email,person)</code></pre></li>
@@ -372,14 +374,14 @@ end</code></pre>
 <li>BOOM!</li>
 </ul>
 </section>
-<section class='BULLETS'>
+<section class='BULLETS' >
 <h1>Just replay!</h1>
 <ul>
 <li><pre><code style="white-space: nowrap" class="no-highlight">MailerService.mail(:send_welcome_email,person)</code></pre></li>
 <li>O_o</li>
 </ul>
 </section>
-<section class='CODE'>
+<section class='CODE' >
 <pre><code class='ruby' data-strikeouts='' data-callout-lines=''>class MailerServiceController
   def create
     type = params[:mail_type] # e.g. :welcome_email
@@ -388,25 +390,25 @@ end</code></pre>
   end
 end</code></pre>
 </section>
-<section class='SECTION'>
+<section class='NORMAL' >
 <h1>MailService</h1>
 <h2>not idempotent</h2>
 </section>
-<section class='BULLETS'>
+<section class='BULLETS' >
 <h1>Idempotent</h1>
 <ul>
 <li>Operation applied many times</li>
 <li>Only the first application has an effect</li>
 </ul>
 </section>
-<section class='BULLETS'>
+<section class='BULLETS' >
 <h1>Make Idempotent</h1>
 <ul>
 <li>Require a client-generated request id</li>
 <li>Perform operation once per request id</li>
 </ul>
 </section>
-<section class='CODE'>
+<section class='CODE' >
 <pre><code class='ruby' data-strikeouts='' data-callout-lines='5,7,8,9,11,12'>class MailerServiceController
   def create
     type       = params[:mail_type]
@@ -423,7 +425,7 @@ end</code></pre>
   end
 end</code></pre>
 </section>
-<section class='CODE'>
+<section class='CODE' >
 <pre><code class='ruby' data-strikeouts='' data-callout-lines='5,6,7,8,9'>def self.perform(id)
   person = Person.find_by_id(id)
   retry_on(:times => 5,
@@ -441,48 +443,47 @@ end</code></pre>
   end
 end</code></pre>
 </section>
-<section class='BULLETS'>
+<section class='BULLETS' >
 <h1>Call <code>mail</code> a zillion times</h1>
 <ul>
 <li>Only one mail sent&hellip;ever</li>
 <li>Same result goes back</li>
 </ul>
 </section>
-<section class='SECTION'>
-<h1>What if the mail fails at the gateway?</h1>
+<section class='BULLETS' >
+<h1>What if&hellip;</h1>
+<ul>
+<li>&hellip;the mail fails at the gateway?</li>
+<li>&hellip;two requests come in at the same time?</li>
+<li>&hellip;my request ids clash?</li>
+</ul>
 </section>
-<section class='SECTION'>
-<h1>What if two requests come in at the same time?</h1>
-</section>
-<section class='SECTION'>
-<h1>What if my request ids clash?</h1>
-</section>
-<section class='IMAGE'>
+<section class='IMAGE' data-background='262626' >
 <img src='images/wtf.png'>
 </section>
-<section class='SECTION'>
+<section class='NORMAL' >
 <h1>No system is perfect</h1>
 </section>
-<section class='TITLE'>
+<section class='SECTION' >
 <h1>What can you do?</h1>
 </section>
-<section class='BULLETS'>
+<section class='BULLETS' >
 <h1>1 - Historical Record</h1>
 <ul>
 <li>Log, log, log</li>
 <li>Audit Activity</li>
 </ul>
 </section>
-<section class='BULLETS'>
+<section class='BULLETS' >
 <h1>2 - Prevent Bad Data</h1>
 <ul>
-<li>Sanity Check invariants</li>
 <li>AR Validations cannot be trusted</li>
 <li>Database constraints</li>
+<li>Sanity Check the rest</li>
 <li>Fix bad data - don't code around it</li>
 </ul>
 </section>
-<section class='BULLETS'>
+<section class='BULLETS' >
 <h1>3 - Fix Errors</h1>
 <ul>
 <li>Email <code>redalert@yourcompany.com</code></li>
@@ -491,7 +492,7 @@ end</code></pre>
 <li>Downgrade to warnings as needed</li>
 </ul>
 </section>
-<section class='BULLETS'>
+<section class='BULLETS' >
 <h1>Extract Services</h1>
 <ul>
 <li>Don't just "be dumb"</li>
@@ -499,7 +500,7 @@ end</code></pre>
 <li>Provide help for the client</li>
 </ul>
 </section>
-<section class='BULLETS'>
+<section class='BULLETS' >
 <h1>In Review</h1>
 <ul>
 <li>Record history</li>
@@ -508,16 +509,16 @@ end</code></pre>
 <li>Make Extracted Services "smart"</li>
 </ul>
 </section>
-<section class='SECTION'>
+<section class='SECTION' >
 <h1>Does this sound fun?</h1>
 </section>
-<section class='SECTION'>
-<h1>We're Hiring</h1>
+<section class='IMAGE' data-background='262626' >
+<img src='images/LSLogo.jpg'>
 </section>
-<section class='IMAGE'>
+<section class='IMAGE' >
 <img src='images/book.png'>
 </section>
-<section class='TITLE'>
+<section class='TITLE' >
 <h1>Thank You!</h1>
 <h2>@davetron5000</h2>
 </section>

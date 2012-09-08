@@ -1,6 +1,15 @@
-section.TITLE, section.SECTION, section.IMAGE {
+section.TITLE, section.SECTION, section.IMAGE, section.NORMAL {
   text-align: center;
 }
+
+body.COMMANDLINE {
+  background: black;
+}
+
+body.CODE {
+  background: #eee8d5;
+}
+
 section.BULLETS {
   margin-left: 64px;
 }
@@ -21,8 +30,13 @@ section.COMMANDLINE .cli-command {
   color: #00ffff;
 }
 
-code {
+section.CODE code {
+  /*
   border-radius: 30px;
+  */
+  border-bottom-right-radius: 0.5em;
+  border-bottom-left-radius: 0.5em;
+  box-shadow: 0 0.3em 0.2em -0.2em #ddd7c4;
 }
 h1, h2, h3, h4 {
   margin: 0;
@@ -39,8 +53,9 @@ p, li {
 }
 
 li {
-  list-style: circle;
+  list-style: disc;
   list-style-position: outside;
-  margin-left: 2em;
+  margin-left: 1em;
+  margin-right: 1em;
   line-height: 2em;
 }

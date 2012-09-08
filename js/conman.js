@@ -87,10 +87,23 @@ var ConmanLoader = function(config,functions) {
   };
 
   function initCurrentSlide() {
+    var slideNumber = 0;
     if (document.location.hash !== "") {
-      Conman.currentSlide = parseInt(document.location.hash.replace("#",""));
+      slideNumber = parseInt(document.location.hash.replace("#",""));
+      Conman.currentSlide = slideNumber;
     }
+    applySlideClassToBody(currentSlide(slideNumber));
   };
+
+  function applySlideClassToBody(slide) {
+    $("body").attr("class",slide.attr("class"));
+    if (slide.attr("data-background")) {
+      $("body").css("background","#" + slide.attr("data-background"));
+    }
+    else {
+      $("body").css("background","");
+    }
+  }
 
   function changeSlides(nextSlide,afterChanges) {
     if ((nextSlide != 0) && (nextSlide != Conman.previousSlide)){
@@ -98,6 +111,7 @@ var ConmanLoader = function(config,functions) {
     }
     afterChanges = Utils.f(afterChanges);
     currentSlide().fadeOut(config.transitionTime / 2, function() {
+      applySlideClassToBody(currentSlide(nextSlide));
       currentSlide(nextSlide).fadeIn(config.transitionTime / 2, function() {
         Conman.currentSlide = nextSlide;
         window.history.replaceState({},"",document.URL.replace(/#.*$/,"") + "#" + Conman.currentSlide);
@@ -150,7 +164,6 @@ var ConmanLoader = function(config,functions) {
       bindKeys([187],Conman.embiggen); // +
       syntaxHighlighter().highlight();
       sizeAllToFit();
-      console.log("loaded!");
       $("section").css("display","none");
       $("li").css("visibility","hidden");
       $("section.COMMANDLINE .cli-element").css("display","none");

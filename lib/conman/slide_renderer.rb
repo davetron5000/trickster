@@ -18,16 +18,12 @@ module Conman
     def write_slide(slide_type,content,slide)
       slide_type,options = slide_type.split(/:/)
       content = content[0..-2] if content[-1] =~ /^\s*$/
-      slide.puts "<section class='#{slide_type}'>"
+      background = ''
+      if options =~ /background=([^\s]+)/
+        background = "data-background='#{$1}' "
+      end
+      slide.puts "<section class='#{slide_type}' #{background}>"
       case slide_type
-      when "TITLE"
-        slide.puts "<h1>#{content[0]}</h1>"
-        slide.puts "<h2>#{content[1]}</h2>" unless content[1].nil?
-        slide.puts "<h3>#{content[2]}</h3>" unless content[2].nil?
-      when "SECTION"
-        slide.puts "<h1>#{content[0]}</h1>"
-        slide.puts "<h2>#{content[1]}</h2>" unless content[1].nil?
-        slide.puts "<h3>#{content[2]}</h3>" unless content[2].nil?
       when "CODE"
         callouts = ''
         strikes = ''
@@ -62,7 +58,9 @@ module Conman
       when "IMAGE"
         slide.puts "<img src='#{content[0]}'>"
       else
-        slide.puts content.join("\n")
+        slide.puts "<h1>#{content[0]}</h1>"
+        slide.puts "<h2>#{content[1]}</h2>" unless content[1].nil? || content[1] == ''
+        slide.puts "<h3>#{content[2]}</h3>" unless content[2].nil? || content[2] == ''
       end
       slide.puts "</section>"
     end
