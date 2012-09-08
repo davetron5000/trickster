@@ -30,13 +30,17 @@ module Conman
         slide.puts "<h3>#{content[2]}</h3>" unless content[2].nil?
       when "CODE"
         callouts = ''
+        strikes = ''
         if options =~ /callout=([^\s]+)/
           callouts = $1
+          callouts = callouts.split(/,/).map(&:to_i)
+          strikes = callouts.select { |_| _ < 0 }.map(&:abs).join(',')
+          callouts = callouts.map(&:abs).join(',')
         end
         if content[0] =~ /file:\/\/(.*$)/
           content = File.open($1).readlines.map(&:chomp)
         end
-        slide.puts "<pre><code class='ruby' data-callout-lines='#{callouts}'>#{content[0]}"
+        slide.puts "<pre><code class='ruby' data-strikeouts='#{strikes}' data-callout-lines='#{callouts}'>#{content[0]}"
         content[1..-2].each { |line| slide.puts line }
         slide.puts "#{content[-1]}</code></pre>"
       when "BULLETS"
@@ -49,7 +53,7 @@ module Conman
         content.each do |line|
           if line =~ /^([>%])/
             prompt = $1.gsub(">","&gt;")
-            slide.puts "<span class='cli-prompt'>#{prompt}</span><span class='cli-element cli-command'>#{line[1..-1].gsub(">","&gt;")}</span>"
+            slide.puts "<span class='cli-prompt'>#{prompt}</span> <span class='cli-element cli-command'>#{line[1..-1].gsub(">","&gt;")}</span>"
           else
             slide.puts "<span class='cli-element cli-result'>#{line}</span>"
           end

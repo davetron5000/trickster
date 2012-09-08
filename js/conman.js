@@ -19,6 +19,7 @@ var ConmanDefaultConfig = {
                     37,  // left arrow
                     33,  // Kensington presenter left arrow
                     8],  // delete
+  startOverKeycodes: [66], // Kensington presenter down/stop
   /** These keycodes, if encountered, will not be sent along
       to the browser.  Useful if there might be some vertical 
       scrolling and 32/33/34 would otherwise scroll */
@@ -41,11 +42,25 @@ var ConmanLoader = function(config,functions) {
   var keyboardBindings = Utils.fOr(functions.keyboardBindings,function() {
     return $(window);
   });
+
+  var strikeThroughCode = Utils.fOr(functions.strikeThroughCode,function() {
+    $("code").each(function() {
+      if ($(this).attr("data-strikeouts")) {
+        var strikes = $(this).attr("data-strikeouts").split(",");
+        for(var index in strikes) {
+          var line = parseInt(strikes[index]) - 1;
+          $(this).find(".line-" + line).css("text-decoration","line-through");
+        }
+      }
+    });
+  });
+
   var syntaxHighlighter = Utils.fOr(functions.syntaxHighlighter,function() {
     return {
       highlight: function() {
         hljs.lineNodes = true;
         hljs.initHighlighting();
+        strikeThroughCode();
       }
     }
   });
@@ -78,6 +93,9 @@ var ConmanLoader = function(config,functions) {
   };
 
   function changeSlides(nextSlide,afterChanges) {
+    if ((nextSlide != 0) && (nextSlide != Conman.previousSlide)){
+      Conman.previousSlide = Conman.currentSlide;
+    }
     afterChanges = Utils.f(afterChanges);
     currentSlide().fadeOut(config.transitionTime / 2, function() {
       currentSlide(nextSlide).fadeIn(config.transitionTime / 2, function() {
@@ -118,6 +136,7 @@ var ConmanLoader = function(config,functions) {
     /** State */
     currentSlide:  0,
     totalSlides:   1,
+    previousSlide: 0,
 
     /** Set everything up for the slideshow */
     load: function() {
@@ -125,9 +144,10 @@ var ConmanLoader = function(config,functions) {
       initCurrentSlide();
       bindKeys(config.advanceKeycodes,Conman.advance);
       bindKeys(config.backKeycodes,Conman.back);
+      bindKeys(config.startOverKeycodes,Conman.startOver);
       preventDefaultKeyCodeAction(config.keyCodesPreventingDefault);
-      bindKeys([189],Conman.shrink);
-      bindKeys([187],Conman.embiggen);
+      bindKeys([189],Conman.shrink);   // -
+      bindKeys([187],Conman.embiggen); // +
       syntaxHighlighter().highlight();
       sizeAllToFit();
       console.log("loaded!");
@@ -151,6 +171,15 @@ var ConmanLoader = function(config,functions) {
       currentSlide().css("font-size",currentSize + 4);
       if (currentSlide().hasClass("CODE") || currentSlide().hasClass("COMMANDLINE")) {
         currentSlide().css("margin-top",-1 * (currentSize - 4));
+      }
+    },
+
+    startOver: function() {
+      if (Conman.currentSlide == 0)  {
+        changeSlides(Conman.previousSlide, bullets.rehideBullets());
+      }
+      else {
+        changeSlides(0,bullets.rehideBullets());
       }
     },
 

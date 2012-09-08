@@ -1,14 +1,9 @@
 var Sizer = function() {
-  function isCodeSlide(element) {
-    if (element.hasClass("CODE") || element.hasClass("COMMANDLINE")) {
-      return true;
-    }
-    else {
-      return false;
-    }
-  }
+  function isCodeSlide(element)  { return (element.hasClass("CODE") || element.hasClass("COMMANDLINE")); }
+  function scrollWidth(element)  { return element[0].scrollWidth;  }
+  function scrollHeight(element) { return element[0].scrollHeight; }
 
-  function linesSameHeight(element) {
+  function linesNotAllSameHeight(element) {
     var heights = {};
     var selector = ".line";
     if (element.find(selector).length == 0) {
@@ -17,48 +12,47 @@ var Sizer = function() {
     element.find(selector).each(function() {
       heights[$(this).height()] = true;
     });
-    return Object.keys(heights).length < 2;
+    return Object.keys(heights).length > 1;
+  }
+
+  /**
+   * @param element JQueryElement element to shrink
+   * @param maxTries int max attempts at shrinking (controls for infinite loops)
+   * @param shouldShrink function given the element, returns true if the element should be shrunken more
+   */
+  function shrinkElement(element,maxTries,shouldShrink) {
+    var fontSize = parseInt(element.css("font-size"));
+    var count = 0;
+    var STEP = 10;
+    while (shouldShrink(element) && (count < maxTries)) {
+      fontSize -= STEP;
+      element.css("font-size",fontSize);
+      if (isCodeSlide(element)) {
+        element.css("margin-top",-1 * fontSize);
+      }
+      count += 1;
+    }
+    return count == maxTries;
   }
 
   function shrinkToPreventWrapping(element) {
-    var fontSize = parseInt(element.css("font-size"));
-    var count = 0;
-    var MAX = 20;
-    var STEP = 10;
-    while (!linesSameHeight(element) && (count < MAX)) {
-      fontSize -= STEP;
-      element.css("font-size",fontSize);
-      element.css("margin-top",-1 * fontSize);
-      count += 1;
-    }
-  }
-
-  function scrollWidth(element) {
-    return element[0].scrollWidth;
-  }
-
-  function scrollHeight(element) {
-    return element[0].scrollHeight;
+    if (!isCodeSlide(element)) { return false; }
+    return shrinkElement(element,20,linesNotAllSameHeight);
   }
 
   function shrinkToFitWidth(element,maxWidth) {
-    var fontSize = parseInt(element.css("font-size"));
-    var count = 0;
-    while ((scrollWidth(element) > maxWidth) && (count < 20)) {
-      fontSize -= 10;
-      element.css("font-size",fontSize);
-      count += 1;
-    }
+    if (isCodeSlide(element)) { return false; }
+    var shouldShrink = function(elem) {
+      return (scrollWidth(element) > maxWidth);
+    };
+    return shrinkElement(element,10,shouldShrink);
   }
-
   function shrinkToFitHeight(element,maxHeight) {
-    var fontSize = parseInt(element.css("font-size"));
-    var count = 0;
-    while ((scrollHeight(element) > maxHeight) && (count < 20)) {
-      fontSize -= 10;
-      element.css("font-size",fontSize);
-      count += 1;
-    }
+    if (isCodeSlide(element)) { return false; }
+    var shouldShrink = function(elem) {
+      return (scrollHeight(element) > maxHeight);
+    };
+    return shrinkElement(element,10,shouldShrink);
   }
 
   return {
@@ -109,17 +103,9 @@ var Sizer = function() {
             }
           }
         }
-        if (isCodeSlide(element)) {
-          shrinkToPreventWrapping(element);
-        }
-        else {
-          if (scrollWidth(element) > maxWidth) {
-            shrinkToFitWidth(element,maxWidth);
-          }
-          if (scrollHeight(element) > maxHeight) {
-            shrinkToFitHeight(element,maxHeight);
-          }
-        }
+        shrinkToPreventWrapping(element);
+        shrinkToFitWidth(element,maxWidth);
+        shrinkToFitHeight(element,maxHeight);
       };
     }
   };
