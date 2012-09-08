@@ -1,53 +1,124 @@
 var Sizer = function() {
+  function isCodeSlide(element) {
+    if (element.hasClass("CODE") || element.hasClass("COMMANDLINE")) {
+      return true;
+    }
+    else {
+      return false;
+    }
+  }
+
+  function linesSameHeight(element) {
+    var heights = {};
+    var selector = ".line";
+    if (element.find(selector).length == 0) {
+      selector = ".cli-element";
+    }
+    element.find(selector).each(function() {
+      heights[$(this).height()] = true;
+    });
+    return Object.keys(heights).length < 2;
+  }
+
+  function shrinkToPreventWrapping(element) {
+    var fontSize = parseInt(element.css("font-size"));
+    var count = 0;
+    var MAX = 20;
+    var STEP = 10;
+    while (!linesSameHeight(element) && (count < MAX)) {
+      fontSize -= STEP;
+      element.css("font-size",fontSize);
+      element.css("margin-top",-1 * fontSize);
+      count += 1;
+    }
+  }
+
+  function scrollWidth(element) {
+    return element[0].scrollWidth;
+  }
+
+  function scrollHeight(element) {
+    return element[0].scrollHeight;
+  }
+
+  function shrinkToFitWidth(element,maxWidth) {
+    var fontSize = parseInt(element.css("font-size"));
+    var count = 0;
+    while ((scrollWidth(element) > maxWidth) && (count < 20)) {
+      fontSize -= 10;
+      element.css("font-size",fontSize);
+      count += 1;
+    }
+  }
+
+  function shrinkToFitHeight(element,maxHeight) {
+    var fontSize = parseInt(element.css("font-size"));
+    var count = 0;
+    while ((scrollHeight(element) > maxHeight) && (count < 20)) {
+      fontSize -= 10;
+      element.css("font-size",fontSize);
+      count += 1;
+    }
+  }
+
   return {
     sizeFunction: function(maxWidth,maxHeight,initialFontSize,tolerance) {
       return function(element) {
-        var newFontSize = initialFontSize;
-        var step = 10;
-        //var log = function(arg) { console.log(arg); };
-        var log = function(arg) {};
-        var heightTolerance = tolerance
-        var widthTolerance = 0;
-        if (element.text().replace(/^\s\s*/, '').replace(/\s\s*$/, '').indexOf(" ") == -1) {
-          widthTolerance = tolerance;
-        }
-
-        while ( (element.width() <= maxWidth) && (element.height() <= maxHeight) ) {
-          log("*");
-          var widthBefore = element.width();
-          var heightBefore = element.height();
-
-          newFontSize = newFontSize + step;
-          log(newFontSize);
-          element.css("font-size",newFontSize);
-
-          var delta = element.width() - widthBefore;
-          var sizeToGo = maxWidth - element.width();
-          step = Math.round(sizeToGo / delta);
-          log("Width: " + element.width() + ", sizeToGo: " + sizeToGo + ", Delta: " + delta + ", step: " + step);
-          if ((step <= 0) || (delta <= 0)) {
-            delta = element.height() - heightBefore;
-            sizeToGo = maxHeight - element.height();
-            step = Math.round(sizeToGo / delta);
-            log("Height: " + element.height() + ", sizeToGo: " + sizeToGo + ", Delta: " + delta + ", step: " + step);
+        function increaseSize(element,fontSize) {
+          if (element.hasClass("COMMANDLINE")) {
+            element.find(".cli-element").each(function() {
+              $(this).css("display","inline")
+            });
           }
-          log("Step: " + step + ", Delta: " + delta);
+          element.css("font-size",fontSize);
+          var results = [scrollWidth(element),element.height()];
+          if (element.hasClass("COMMANDLINE")) {
+            element.find(".cli-element").each(function() {
+              $(this).css("display","none")
+            });
+          }
+          return results;
+        }
+        var now = (new Date()).getTime();
 
-          if ((step <= 0) || (delta <= 0)) { break; }
+        var currentFontSize,currentSize,newFontSize,newSize,rise,runWidth,runHeight;
+
+        currentFontSize = parseInt(element.css("font-size"));
+        currentSize = increaseSize(element,currentFontSize);
+        newFontSize = currentFontSize + 10;
+
+        for(var i=0;i<3;i = i + 1) {
+          if (newFontSize > currentFontSize) {
+            newSize = increaseSize(element,newFontSize);
+
+            rise = newFontSize - currentFontSize;
+            runWidth = newSize[0] - currentSize[0];
+            runHeight = newSize[1] - currentSize[1];
+
+            currentFontSize = newFontSize;
+            currentSize = newSize;
+            if (isCodeSlide(element)) {
+              element.css("margin-top",-1 * newFontSize);
+              newFontSize = Math.floor(rise * maxHeight / runHeight);
+            }
+            else if (element.hasClass("BULLETS")) {
+              newFontSize = Math.floor(rise * maxHeight / runHeight);
+            }
+            else {
+              newFontSize = Math.floor((rise * maxWidth / runWidth, rise * maxHeight / runHeight) / 2);
+            }
+          }
         }
-        while (element.width() > (maxWidth - widthTolerance)) {
-          log("Backing off due to width:" + element.width() + "x" + element.height() + ":" + maxWidth);
-          newFontSize = newFontSize - 2;
-          element.css("font-size",newFontSize);
+        if (isCodeSlide(element)) {
+          shrinkToPreventWrapping(element);
         }
-        while (element.height() > (maxHeight - heightTolerance)) {
-          log("Backing off due to height:" + element.width() + "x" + element.height() + ":" + maxHeight);
-          newFontSize = newFontSize - 2;
-          element.css("font-size",newFontSize);
-        }
-        log(element.width() + "x" + element.height() + ":" + maxWidth + "x" + maxHeight);
-        if (element.hasClass("CODE") || element.hasClass("COMMANDLINE")) {
-          element.css("margin-top",-1 * newFontSize);
+        else {
+          if (scrollWidth(element) > maxWidth) {
+            shrinkToFitWidth(element,maxWidth);
+          }
+          if (scrollHeight(element) > maxHeight) {
+            shrinkToFitHeight(element,maxHeight);
+          }
         }
       };
     }

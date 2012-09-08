@@ -18,7 +18,11 @@ var ConmanDefaultConfig = {
   backKeycodes:    [75,  // k
                     37,  // left arrow
                     33,  // Kensington presenter left arrow
-                    8]   // delete
+                    8],  // delete
+  /** These keycodes, if encountered, will not be sent along
+      to the browser.  Useful if there might be some vertical 
+      scrolling and 32/33/34 would otherwise scroll */
+  keyCodesPreventingDefault: [ 34, 32, 33 ]
 };
 /** Loads Conman.
  * config: configuration, or ConmanDefaultConfig to get the defaults
@@ -41,7 +45,7 @@ var ConmanLoader = function(config,functions) {
     return {
       highlight: function() {
         hljs.lineNodes = true;
-        hljs.initHighlightingOnLoad();
+        hljs.initHighlighting();
       }
     }
   });
@@ -49,6 +53,13 @@ var ConmanLoader = function(config,functions) {
     $(window).keyup(function(event) {
       if (keyCodes.indexOf(event.which) != -1) {
         f();
+      }
+    });
+  });
+  var preventDefaultKeyCodeAction = Utils.fOr(functions.preventDefaultKeyCodeAction,function(keyCodes) {
+    $(window).keydown(function(event) {
+      if (keyCodes.indexOf(event.which) != -1) {
+        event.preventDefault();
       }
     });
   });
@@ -72,12 +83,20 @@ var ConmanLoader = function(config,functions) {
       currentSlide(nextSlide).fadeIn(config.transitionTime / 2, function() {
         Conman.currentSlide = nextSlide;
         window.history.replaceState({},"",document.URL.replace(/#.*$/,"") + "#" + Conman.currentSlide);
-        if (currentSlide().attr("class").indexOf("IMAGE") != -1) {
+        if (currentSlide().hasClass("IMAGE")) {
           var img    = currentSlide().find("img");
           var width  = browserWindow().width  - config.padding;
           var height = browserWindow().height - config.padding;
-          if (img.height > height) { img.height(height); }
-          if (img.width > width) { img.width(width); }
+          var widthDiff = img.width() - width;
+          var heightDiff = img.height() - height;
+          if ((widthDiff > 0) || (heightDiff > 0)) {
+            if (widthDiff > heightDiff) {
+              img.width(width);
+            }
+            else {
+              img.height(height);
+            }
+          }
         }
         afterChanges();
       });
@@ -85,24 +104,11 @@ var ConmanLoader = function(config,functions) {
   };
 
   function sizeAllToFit() {
-    var sizableElement = function(slide) {
-      // setting the size on the PRE or DIV creates a big top margin for some reason
-      if (slide.children().first()[0].tagName == "PRE") {
-        //return slide.children().first().children().first();
-        return slide;
+    slides().each(function(index,element) {
+      var sizeToFit = Sizer.sizeFunction(browserWindow().width,browserWindow().height,config.minFontSize,config.padding);
+      if (!$(element).hasClass("IMAGE")) {
+        sizeToFit($(element));
       }
-      else {
-        return slide;
-      }
-    };
-
-    var shouldResize = function(slide) {
-      return !(slide.attr("class").indexOf("IMAGE") != -1);
-    };
-
-    var sizeToFit = Sizer.sizeFunction(browserWindow().width,browserWindow().height,config.minFontSize,config.padding);
-    slides().select(shouldResize).each(function(index,element) {
-      sizeToFit(sizableElement($(element)));
     });
   }
 
@@ -119,22 +125,33 @@ var ConmanLoader = function(config,functions) {
       initCurrentSlide();
       bindKeys(config.advanceKeycodes,Conman.advance);
       bindKeys(config.backKeycodes,Conman.back);
+      preventDefaultKeyCodeAction(config.keyCodesPreventingDefault);
       bindKeys([189],Conman.shrink);
       bindKeys([187],Conman.embiggen);
-      sizeAllToFit();
-      currentSlide().fadeIn(config.transitionTime / 2);
       syntaxHighlighter().highlight();
+      sizeAllToFit();
+      console.log("loaded!");
+      $("section").css("display","none");
+      $("li").css("visibility","hidden");
+      $("section.COMMANDLINE .cli-element").css("display","none");
+      currentSlide().fadeIn(config.transitionTime / 2);
     },
 
     /** Reduce the font-size of the current slide slightly */
     shrink: function() {
       var currentSize = parseInt(currentSlide().css("font-size"));
       currentSlide().css("font-size",currentSize - 4);
+      if (currentSlide().hasClass("CODE") || currentSlide().hasClass("COMMANDLINE")) {
+        currentSlide().css("margin-top",-1 * (currentSize - 4));
+      }
     },
     /** Increase the font-size of the current slide slightly */
     embiggen: function() {
       var currentSize = parseInt(currentSlide().css("font-size"));
       currentSlide().css("font-size",currentSize + 4);
+      if (currentSlide().hasClass("CODE") || currentSlide().hasClass("COMMANDLINE")) {
+        currentSlide().css("margin-top",-1 * (currentSize - 4));
+      }
     },
 
     /** Move forward one slide */

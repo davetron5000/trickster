@@ -17,19 +17,11 @@
     -->
     <link rel="stylesheet" href="css/styles.css">
     <script>
-      $(document).ready(function() {
+      $(window).load(function() {
         Conman = ConmanLoader(ConmanDefaultConfig,{});
         Conman.load();
       });
     </script>
-    <style>
-      section {
-        display: none;
-      }
-      li {
-        visibility: hidden;
-      }
-    </style>
   </head>
   <body><div id="contents">
     <%= body %>

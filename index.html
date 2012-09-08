@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title>AWESOME PRESENTATION</title>
+    <title>Serivces, Scale, Backgrounding and WTF is going on here?!??!</title>
     <script src="js/lib/jquery-1.8.0.min.js"></script>
     <script src="js/lib/highlight-fc32801.min.js"></script>
     <script src="js/lib/jquerytypewriter.js"></script>
@@ -17,66 +17,511 @@
     -->
     <link rel="stylesheet" href="css/styles.css">
     <script>
-      $(document).ready(function() {
+      $(window).load(function() {
         Conman = ConmanLoader(ConmanDefaultConfig,{});
         Conman.load();
       });
     </script>
-    <style>
-      section {
-        display: none;
-      }
-      li {
-        visibility: hidden;
-      }
-    </style>
   </head>
   <body><div id="contents">
     <section class='TITLE'>
-<h1>This is a slide</h1>
+<h1>Serivces, Scale, Backgrounding and WTF is going on here?!??!</h1>
+<h2>@davetron5000</h2>
+<h3>http://www.naildrivin5.com/blog</h3>
 </section>
-<section class='BULLETS'>
-<h1>Bullet title</h1>
-<ul>
-<li>some bullets</li>
-<li>here are more</li>
-<li>and here's some</li>
-</ul>
+<section class='SECTION'>
+<h1>A story</h1>
+<h2>about reasonable developers and reasonable decisions</h2>
+<h3>creating a service-oriented architecture</h3>
 </section>
-<section class='CODE'>
-<pre><code class='ruby' data-callout-lines=''>def doit
-  puts "blah?"
-  return "foo" if crud?
-  puts "bar"
-
-  return "bar"
-end</code></pre>
+<section class='SECTION'>
+<h1>LivingSocial</h1>
 </section>
-<section class='TITLE'>
-<h1>Too verbose</h1>
-<h2>Let's fix it</h2>
+<section class='SECTION'>
+<h1>Tech Lead, Payments</h1>
+<h2>(i.e. the money)</h2>
 </section>
 <section class='CODE'>
-<pre><code class='ruby' data-callout-lines='3,4,5,6,7,8'>def doit
-  puts "blah?"
-  if crud?
-    return "foo"
-  else
-    puts "bar"
-    return "bar"
+<pre><code class='ruby' data-callout-lines=''>class PeopleController << ApplicationController
+  def create
+    @person = Person.create(params[:person])
+    if @person.valid?
+      UserMailer.send_welcome_email(person)
+      redirect_to people_path
+    else
+      flash[:error] = 'Invalid Data'
+      redirect_to new_person_path
+    end
   end
 end</code></pre>
 </section>
-<section class='COMMANDLINE'>
-<pre><code class='no-highlight'><span class='cli-prompt'>&gt;</span><span class='cli-element cli-command'> ls -l</span>
-<span class='cli-element cli-result'>foo   bar.c   main.o</span>
-<span class='cli-prompt'>&gt;</span><span class='cli-element cli-command'> bundle exec rails console production</span>
-<span class='cli-element cli-result'>irb> puts "yay, console"</span>
-</code></pre>
+<section class='BULLETS'>
+<h1>UX Problem</h1>
+<ul>
+<li>Enter my stuff</li>
+<li>Save to DB</li>
+<li>Wait for Mailer</li>
+<li>Wasted Proccessor Time</li>
+</ul>
 </section>
 <section class='SECTION'>
-<h1>Section</h1>
-<h2>Subsection title</h2>
+<h1>Background Processing!</h1>
+<h2></h2>
+</section>
+<section class='CODE'>
+<pre><code class='ruby' data-callout-lines='4'>def create
+  @person = Person.create(params[:person])
+  if @person.valid?
+    Resque.enqueue(NewPersonEvent,:id => @person.id)
+    redirect_to people_path
+  else
+     # ...
+  end
+end</code></pre>
+</section>
+<section class='CODE'>
+<pre><code class='ruby' data-callout-lines=''>class NewPersonEvent
+  def self.perform(id)
+    person = Person.find(id)
+    UserMailer.send_welcome_email(person)
+  end
+end</code></pre>
+</section>
+<section class='SECTION'>
+<h1>A few months later&hellip;</h1>
+</section>
+<section class='CODE'>
+<pre><code class='ruby' data-callout-lines='4'>def create
+  @person = Person.create(params[:person])
+  if @person.valid?
+    Resque.enqueue(NewPersonEvent,:id => @person.id) #! ETIMEDOUT
+  else
+     # ...
+  end
+end</code></pre>
+</section>
+<section class='BULLETS'>
+<h1>Timeout to Redis</h1>
+<ul>
+<li>Person record created&hellip;</li>
+<li>&hellip;but email wasn't sent</li>
+<li>Person can't be validated</li>
+<li>Unique email constraints anyone?</li>
+</ul>
+</section>
+<section class='COMMANDLINE'>
+<pre><code class='no-highlight'><span class='cli-prompt'>&gt;</span><span class='cli-element cli-command'> bundle exec rails console production</span>
+<span class='cli-element cli-result'>irb> has_a_sad</span>
+</code></pre>
+</section>
+<section class='BULLETS'>
+<h1>Solution</h1>
+<ul>
+<li>Person created and email sent</li>
+<li><strong>or</strong></li>
+<li>No email sent and no person created</li>
+<li>Transactions</li>
+</ul>
+</section>
+<section class='CODE'>
+<pre><code class='ruby' data-callout-lines='2,9'>def create
+  Person.transaction do
+    @person = Person.create(params[:person])
+    if @person.valid?
+      Resque.enqueue(NewPersonEvent,:id => @person.id)
+      redirect_to people_path
+    else
+       # ...
+    end
+  end
+end</code></pre>
+</section>
+<section class='SECTION'>
+<h1>A few weeks later&hellip;</h1>
+</section>
+<section class='CODE'>
+<pre><code class='ruby' data-callout-lines='3'>class NewPersonEvent
+  def self.perform(id)
+    person = Person.find(id) #! ActiveRecord::NotFoundError
+    UserMailer.send_welcome_email(person)
+  end
+end</code></pre>
+</section>
+<section class='BULLETS'>
+<h1>WTF?</h1>
+<ul>
+<li>Got the id from the database</li>
+<li>Event created</li>
+<li>Event processed</li>
+<li>Transaction not yet committed</li>
+</ul>
+</section>
+<section class='CODE'>
+<pre><code class='ruby' data-callout-lines=''>class NewPersonEvent
+
+
+  def self.perform(id)
+    person = Person.find_by_id(id)
+
+
+      UserMailer.send_welcome_email(person)
+
+  end
+end</code></pre>
+</section>
+<section class='CODE'>
+<pre><code class='ruby' data-callout-lines='2,6,7,9'>class NewPersonEvent
+  include ResqueRetryOTron7000
+
+  def self.perform(id)
+    person = Person.find_by_id(id)
+    retry_on(:times => 5,
+             :when  => lambda { person.nil? }) do
+      UserMailer.send_welcome_email(person)
+    end
+  end
+end</code></pre>
+</section>
+<section class='BULLETS'>
+<h1>Better(ish)</h1>
+<ul>
+<li>Likely to complete in 5 retries</li>
+<li>Can replay any that bubble up</li>
+</ul>
+</section>
+<section class='SECTION'>
+<h1>New Requirement</h1>
+</section>
+<section class='BULLETS'>
+<h1>Bulk Upload some Users</h1>
+<ul>
+<li>Send welcome emails</li>
+<li>Same business logic</li>
+</ul>
+</section>
+<section class='SECTION'>
+<h1>After we create a Person&hellip;</h1>
+<h2>&hellip;run our business logic</h2>
+</section>
+<section class='CODE'>
+<pre><code class='ruby' data-callout-lines='4,11'>class Person < ActiveRecord::Base
+  # ...
+
+  after_create :send_new_person_event
+
+  # ...
+
+private
+
+  def send_new_person_event
+    Resque.enqueue(NewPersonEvent,:id => @person.id)
+  end
+end</code></pre>
+</section>
+<section class='CODE'>
+<pre><code class='ruby' data-callout-lines=''>def create
+  Person.transaction do
+    @person = Person.create(params[:person])
+    if @person.valid?
+      Resque.enqueue(NewPersonEvent,:id => @person.id)
+      redirect_to people_path
+    else
+       # ...
+    end
+  end
+end</code></pre>
+</section>
+<section class='CODE'>
+<pre><code class='ruby' data-callout-lines=''>def create
+
+  @person = Person.create(params[:person])
+  if @person.valid?
+    redirect_to people_path
+  else
+     # ...
+  end
+
+end</code></pre>
+</section>
+<section class='BULLETS'>
+<h1>Reasonable</h1>
+<ul>
+<li>Other approaches exist</li>
+<li>Some might be better</li>
+<li>Nothing inherently wrong here</li>
+</ul>
+</section>
+<section class='CODE'>
+<pre><code class='ruby' data-callout-lines='13'># ab65765df - Added stats
+class Person < ActiveRecord::Base
+  # ...
+
+  after_create :send_new_person_event
+
+  # ...
+
+private
+
+  def send_new_person_event
+    Resque.enqueue(NewPersonEvent,:id => @person.id)
+    Stats.ping(:new_person)
+  end
+end</code></pre>
+</section>
+<section class='CODE'>
+<pre><code class='ruby' data-callout-lines='14'># 887ef0cf - Need to cache user names
+class Person < ActiveRecord::Base
+  # ...
+
+  after_create :send_new_person_event
+
+  # ...
+
+private
+
+  def send_new_person_event
+    Resque.enqueue(NewPersonEvent,:id => @person.id)
+    Stats.ping(:new_person)
+    PersonCache.put(:name,@person.id,@person.name)
+  end
+end</code></pre>
+</section>
+<section class='CODE'>
+<pre><code class='ruby' data-callout-lines='15,16'># 762dbda6 - Experimental AI
+class Person < ActiveRecord::Base
+  # ...
+
+  after_create :send_new_person_event
+
+  # ...
+
+private
+
+  def send_new_person_event
+    Resque.enqueue(NewPersonEvent,:id => @person.id)
+    Stats.ping(:new_person)
+    PersonCache.put(:name,@person.id,@person.name)
+    PetProject.frobnosticate(
+        HexDigest.md5_sha1_hash_rot13(@person.inspect))
+  end
+end</code></pre>
+</section>
+<section class='SECTION'>
+<h1>REASONABLE</h1>
+</section>
+<section class='TITLE'>
+<h1>More</h1>
+<h2>Services</h2>
+</section>
+<section class='BULLETS'>
+<h1>Mail</h1>
+<ul>
+<li>Mailers are Deprecated</li>
+<li>New Awesome Mail Service</li>
+<li>Just a Simple REST Call</li>
+</ul>
+</section>
+<section class='CODE'>
+<pre><code class='ruby' data-callout-lines='8'>class NewPersonEvent
+  include ResqueRetryOTron
+
+  def self.perform(id)
+    person = Person.find_by_id(id)
+    retry_on(:times => 5,
+             :when  => lambda { person.nil? }) do
+      MailerService.mail(:send_welcome_email,person)
+    end
+  end
+end</code></pre>
+</section>
+<section class='SECTION'>
+<h1>Meanwhile&hellip;</h1>
+<h2>a Refactoring's afoot!</h2>
+</section>
+<section class='CODE'>
+<pre><code class='ruby' data-callout-lines='3,4,5,6'>def send_new_person_event
+  Resque.enqueue(NewPersonEvent,:id => @person.id)
+  Stats.ping(:new_person)
+  PersonCache.put(:name,@person.id,@person.name)
+  PetProject.frobnosticate(
+      HexDigest.md5_sha1_hash_rot13(@person.inspect))
+end</code></pre>
+</section>
+<section class='CODE'>
+<pre><code class='ruby' data-callout-lines=''>def send_new_person_event
+  Resque.enqueue(NewPersonEvent,:id => @person.id)
+end</code></pre>
+</section>
+<section class='CODE'>
+<pre><code class='ruby' data-callout-lines='6,7,8,9'>def self.perform(id)
+  person = Person.find_by_id(id)
+  retry_on(:times => 5,
+           :when  => lambda { person.nil? }) do
+    MailerService.mail(:send_welcome_email,person)
+    Stats.ping(:new_person)
+    PersonCache.put(:name,@person.id,@person.name)
+    PetProject.frobnosticate(
+        HexDigest.md5_sha1_hash_rot13(@person.inspect))
+  end
+end</code></pre>
+</section>
+<section class='BULLETS'>
+<h1>An event fails!</h1>
+<ul>
+<li><pre><code class="no-highlight">MailerService.mail(:send_welcome_email,person)</code></pre></li>
+<li><pre><code class="no-highlight">Stats.ping(:new_person)</code></pre></li>
+<li><pre><code class="no-highlight">PersonCache.put(:name,@person.id,@person.name)</code></pre></li>
+<li>BOOM!</li>
+</ul>
+</section>
+<section class='BULLETS'>
+<h1>Just replay!</h1>
+<ul>
+<li><pre><code style="white-space: nowrap" class="no-highlight">MailerService.mail(:send_welcome_email,person)</code></pre></li>
+<li>O_o</li>
+</ul>
+</section>
+<section class='CODE'>
+<pre><code class='ruby' data-callout-lines=''>class MailerServiceController
+  def create
+    type = params[:mail_type] # e.g. :welcome_email
+    data = params[:data] # e.g. person
+    Mailers.find(type).mail(data)
+  end
+end</code></pre>
+</section>
+<section class='SECTION'>
+<h1>MailService</h1>
+<h2>not idempotent</h2>
+</section>
+<section class='BULLETS'>
+<h1>Idempotent</h1>
+<ul>
+<li>Operation applied many times</li>
+<li>Only the first application has an effect</li>
+</ul>
+</section>
+<section class='BULLETS'>
+<h1>Make Idempotent</h1>
+<ul>
+<li>Require a client-generated request id</li>
+<li>Perform operation once per request id</li>
+</ul>
+</section>
+<section class='CODE'>
+<pre><code class='ruby' data-callout-lines='5,7,8,9,11,12'>class MailerServiceController
+  def create
+    type       = params[:mail_type]
+    data       = params[:data]
+    request_id = params[:request_id]
+
+    if request = Request.find_by_request_id(request_id)
+      respond_with(request.results)
+    else
+      results = Mailers.find(type).mail(data)
+      respond_with(Request.create!(:request_id => request_id,
+                                   :results    => results).results)
+    end
+  end
+end</code></pre>
+</section>
+<section class='CODE'>
+<pre><code class='ruby' data-callout-lines='5,6,7,8,9'>def self.perform(id)
+  person = Person.find_by_id(id)
+  retry_on(:times => 5,
+           :when  => lambda { person.nil? }) do
+    mail_type = :send_welcome_email
+    MailerService.mail(
+      :send_welcome_email,
+      person,
+      :request_id => "#{mail_type}/#{@person.id}")
+
+    Stats.ping(:new_person)
+    PersonCache.put(:name,@person.id,@person.name)
+    PetProject.frobnosticate(
+        HexDigest.md5_sha1_hash_rot13(@person.inspect))
+  end
+end</code></pre>
+</section>
+<section class='BULLETS'>
+<h1>Call <code>mail</code> a zillion times</h1>
+<ul>
+<li>Only one mail sent&hellip;ever</li>
+<li>Same result goes back</li>
+</ul>
+</section>
+<section class='SECTION'>
+<h1>What if the mail fails at the gateway?</h1>
+</section>
+<section class='SECTION'>
+<h1>What if two requests come in at the same time?</h1>
+</section>
+<section class='SECTION'>
+<h1>What if my request ids clash?</h1>
+</section>
+<section class='IMAGE'>
+<img src='images/wtf.png'>
+</section>
+<section class='SECTION'>
+<h1>No system is perfect</h1>
+</section>
+<section class='TITLE'>
+<h1>What can you do?</h1>
+</section>
+<section class='BULLETS'>
+<h1>1 - Historical Record</h1>
+<ul>
+<li>Log, log, log</li>
+<li>Audit Activity</li>
+</ul>
+</section>
+<section class='BULLETS'>
+<h1>2 - Prevent Bad Data</h1>
+<ul>
+<li>Sanity Check invariants</li>
+<li>AR Validations cannot be trusted</li>
+<li>Database constraints</li>
+<li>Fix bad data - don't code around it</li>
+</ul>
+</section>
+<section class='BULLETS'>
+<h1>3 - Fix Errors</h1>
+<ul>
+<li>Email <code>redalert@yourcompany.com</code></li>
+<li>Fix the problem</li>
+<li>Prevent the error</li>
+<li>Downgrade to warnings as needed</li>
+</ul>
+</section>
+<section class='BULLETS'>
+<h1>Extract Services</h1>
+<ul>
+<li>Don't just "be dumb"</li>
+<li>Design for Idempotence</li>
+<li>Provide help for the client</li>
+</ul>
+</section>
+<section class='BULLETS'>
+<h1>In Review</h1>
+<ul>
+<li>Record history</li>
+<li>Prevent bad data</li>
+<li>Fix errors</li>
+<li>Make Extracted Services "smart"</li>
+</ul>
+</section>
+<section class='SECTION'>
+<h1>Does this sound fun?</h1>
+</section>
+<section class='SECTION'>
+<h1>We're Hiring</h1>
+</section>
+<section class='IMAGE'>
+<img src='images/book.png'>
+</section>
+<section class='TITLE'>
+<h1>Thank You!</h1>
+<h2>@davetron5000</h2>
 </section>
 
   </div></body>

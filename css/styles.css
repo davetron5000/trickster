@@ -12,10 +12,6 @@ section.COMMANDLINE code {
   color: #00ff00;
 }
 
-section.COMMANDLINE .cli-element {
-  display: none;
-}
-
 section.COMMANDLINE .cli-prompt {
   font-weight: bold;
   color: white;
@@ -42,3 +38,9 @@ p, li {
   font-family: Helvetica;
 }
 
+li {
+  list-style: circle;
+  list-style-position: outside;
+  margin-left: 2em;
+  line-height: 2em;
+}
