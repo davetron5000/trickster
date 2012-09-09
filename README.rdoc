@@ -69,8 +69,6 @@ Further, if the line number is preceded with a dash (e.g. <tt>-3</tt>), that lin
 
 This slide is for showing command-line invocations and results.  It's currently implemented in a pretty inflexible way, but the idea is that each command-line command is a line starting with a <tt>></tt> or <tt>%</tt>.  The line following is the output of that command.  When you play the presentation, the commands are "typewritered" out, and the results displayed automatically.
 
-<b>This currently only works if you every line as a command and every other line as a result.  Sorry</b>It's currently implemented in a pretty inflexible way, but the idea is that each command-line command is a line starting with a <tt>></tt> or <tt>%</tt>.  The line following is the output of that command.  When you play the presentation, the commands are "typewritered" out, and the results displayed automatically.
-
 <b>This currently only works if you every line as a command and every other line as a result.  Sorry</b>
 
 === Any other type
