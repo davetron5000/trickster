@@ -1,0 +1,4 @@
+* Have executable generate a bundle instead of running it out this dir
+* Implement 'watch' to regenerate
+* Implement 'init' to boostrap bundle
+* SASS

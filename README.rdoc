@@ -1,6 +1,83 @@
 = conman
 
-Describe your project here
+Conman is what should hopefully be me perfect in-browser presentation software.
+
+The goals are ultimately to have each slide be as big as it can be, so that you don't have worry about
+custom screens, font-sizes, or maximizing space.
+
+It does this by compiling your presentation into an HTML file that, when loaded, will execute the Conman
+JavaScript, which will dynamically resize each slide to the biggest it can be based on the browser's current size.
+
+== Presentation Format
+
+Your presentation is stored in text file.  Each slide has the following format:
+
+    !<slide_type>: options
+    <content>
+    <content>
+    <content>
+
+Where <tt>slide_type</tt> is one of the types listed below.  <tt>options</tt> is a space-delimited key/value string of options.  <tt>content</tt> is the content of the slide, interpreted based on the slide type.
+
+=== Example:
+
+    !TITLE: background=262626
+    Welcome to my presentation!
+    It's going to be awesome!
+
+    !CODE
+    def some_method(x)
+      if x.nil?
+        return "foo"
+      else
+        return x.upcase
+      end
+    end
+
+    !BULLETS
+    Check these bullets out!
+    * This slide
+    * is great!
+    * and will be huge!
+
+This defines three slides, the first of which is a TITLE with a custom background, the second of which is code, and the third of which is bullets.  When you play the presentation, each bullet is revealed one at a time.
+
+Also note that each slide will be in a +section+ tag, with the CSS class of its type.  This allows you to control styling per slide type.
+== options
+
+background:: although you can customize each slide based on its CSS class, this option allows you to customize the background of this particular slide.  This is useful for IMAGE slides where you might want to better match the image's colors
+
+== Slide Types
+
+== BULLETS
+The first line is the "title" if this slide, rendered in an +H1+.  The remaining are bullets.  If a bullet line is preceded with a <tt>*</tt>, <tt>-</tt>, or <tt>+</tt>, that bullet character is omitted automatically.
+
+== IMAGE
+The first line is the url to the image to show.
+
+== CODE
+
+If the first line starts with <tt>file://</tt>, the contents of this file is read in as the contents of the code block.  Otherwise, the entire contents of the slide is verbatim put into a +pre+ and then +code+ block.  Syntax highlighting is done using a modified version of +highlight.js+.  This modification demarcates each line of the code, and allows you to show line numbers and callout particular lines.
+
+=== Callouts
+
+A code slide accepts an option of +callout+ which is a comma-delimited list of the lines of code to "call out" with special styling.  This is useful if you are talking about particular lines, or are demonstrating new lines having been added to a previous example.
+
+Further, if the line number is preceded with a dash (e.g. <tt>-3</tt>), that line will be styled for strikethrough, in addition to being highlighed.  This is useful to show lines of code that are going to be deleted based on whatever you are talking about.
+
+== COMMANDLINE
+
+This slide is for showing command-line invocations and results.  It's currently implemented in a pretty inflexible way, but the idea is that each command-line command is a line starting with a <tt>></tt> or <tt>%</tt>.  The line following is the output of that command.  When you play the presentation, the commands are "typewritered" out, and the results displayed automatically.
+
+<b>This currently only works if you every line as a command and every other line as a result.  Sorry</b>It's currently implemented in a pretty inflexible way, but the idea is that each command-line command is a line starting with a <tt>></tt> or <tt>%</tt>.  The line following is the output of that command.  When you play the presentation, the commands are "typewritered" out, and the results displayed automatically.
+
+<b>This currently only works if you every line as a command and every other line as a result.  Sorry</b>
+
+=== Any other type
+
+These slides take the first three lines of content and display them in an +H1+, +H2+, and +H3+, respectively.  All other lines are ignored.
+
+= CLI
 
 :include:conman.rdoc
 
