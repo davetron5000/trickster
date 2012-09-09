@@ -31,6 +31,7 @@ erb/index.html.erb
   s.add_development_dependency('rdoc')
   s.add_development_dependency('aruba')
   s.add_development_dependency('jasmine-headless-webkit')
+  s.add_development_dependency('clean_test')
   s.add_runtime_dependency('gli','2.0.0')
   s.add_runtime_dependency('kramdown')
 end

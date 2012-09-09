@@ -1,4 +1,6 @@
 require 'test/unit'
+require 'conman'
+require 'clean_test/test_case'
 
 # Add test libraries you want to use here, e.g. mocha
 
