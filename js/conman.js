@@ -1,10 +1,6 @@
 var ConmanDefaultConfig = {
   /** Padding between max width and max font size */
   padding:          128,
-  /** Don't make fonts bigger than this */
-  maxFontSize:      500,
-  /** Don't make fonts smaller than this */
-  minFontSize:      30,
   /** Time, in ms, to transition between slides */
   transitionTime:   200,
   /** Time, in ms, that it should take to type each command */
@@ -137,7 +133,7 @@ var ConmanLoader = function(config,functions) {
 
   function sizeAllToFit() {
     slides().each(function(index,element) {
-      var sizeToFit = Sizer.sizeFunction(browserWindow().width,browserWindow().height,config.minFontSize,config.padding);
+      var sizeToFit = Sizer.sizeFunction(browserWindow().width,browserWindow().height);
       if (!$(element).hasClass("IMAGE")) {
         sizeToFit($(element));
       }

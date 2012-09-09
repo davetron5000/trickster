@@ -9,8 +9,8 @@ var Sizer = function() {
     if (element.find(selector).length == 0) {
       selector = ".cli-element";
     }
-    element.find(selector).each(function() {
-      heights[$(this).height()] = true;
+    element.find(selector).each(function(index,thisElement) {
+      heights[$(thisElement).height()] = true;
     });
     return Object.keys(heights).length > 1;
   }
@@ -56,25 +56,25 @@ var Sizer = function() {
   }
 
   return {
-    sizeFunction: function(maxWidth,maxHeight,initialFontSize,tolerance) {
+    sizeFunction: function(maxWidth,maxHeight) {
       return function(element) {
         function increaseSize(element,fontSize) {
           if (element.hasClass("COMMANDLINE")) {
-            element.find(".cli-element").each(function() {
-              $(this).css("display","inline")
+            element.find(".cli-element").each(function(index,thisElement) {
+              $(thisElement).css("display","inline")
             });
           }
+
           element.css("font-size",fontSize);
           var results = [scrollWidth(element),element.height()];
+
           if (element.hasClass("COMMANDLINE")) {
-            element.find(".cli-element").each(function() {
-              $(this).css("display","none")
+            element.find(".cli-element").each(function(index,thisElement) {
+              $(thisElement).css("display","none")
             });
           }
           return results;
         }
-        var now = (new Date()).getTime();
-
         var currentFontSize,currentSize,newFontSize,newSize,rise,runWidth,runHeight;
 
         currentFontSize = parseInt(element.css("font-size"));
