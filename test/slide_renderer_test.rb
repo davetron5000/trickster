@@ -149,6 +149,42 @@ class SlideRendererTest < Clean::Test::TestCase
     }
   end
 
+  test_that "COMMANDLINE groups commands and responses together" do
+    Given {
+      @command1 = any_string :max => 10
+      @result1a = any_string :max => 10
+      @result1b = any_string :max => 10
+      @command2 = any_string :max => 10
+      @result2 = any_string :max => 10
+      @command3 = any_string :max => 10
+      @content = [
+        ">" + @command1,
+        @result1a,
+        @result1b,
+        "%" + @command2,
+        @result2,
+        ">" + @command3,
+      ]
+    }
+    When {
+      @renderer.render_slide("COMMANDLINE",@content)
+    }
+    Then {
+      assert_content(
+        "COMMANDLINE",
+        [
+          "<pre><code class='no-highlight'><span class='cli-prompt'>&gt;</span> <span class='cli-element cli-command'>#{@command1}</span>",
+          "<span class='cli-element cli-result'>#{@result1a}",
+          "#{@result1b}</span>",
+          "<span class='cli-prompt'>%</span> <span class='cli-element cli-command'>#{@command2}</span>",
+          "<span class='cli-element cli-result'>#{@result2}</span>",
+          "<span class='cli-prompt'>&gt;</span> <span class='cli-element cli-command'>#{@command3}</span>",
+          "</code></pre>",
+        ],
+        @renderer.content)
+    }
+  end
+
   test_that "CODE wraps the code in a pre/code block" do
     Given {
       @code = [
