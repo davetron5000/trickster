@@ -3,6 +3,7 @@
 require 'gli'
 require 'conman'
 require 'erb'
+require 'fileutils'
 
 include GLI::App
 
@@ -14,13 +15,49 @@ desc 'Create a new conman presentation'
 arg_name 'dir_name'
 command :init do |c|
   c.action do |global_options,options,args|
-    puts "init command ran"
+    dir = args.shift
+    FileUtils.mkdir(dir)
+    File.open(File.join(dir,'slides'),'w') do |file|
+      file.puts <<EOF
+Title of your slideshow
+!TITLE
+Title of your slideshow
+Subtitle
+Sub-sub title
+
+!SECTION
+A section
+
+!BULLETS
+A bullet list
+* can use any
+- reasonable
++ bullet
+
+!CODE callout=3,4,5
+class YourCode
+
+  def initialize(will)
+    @be_highlighted
+  end
+
+end
+EOF
+      base = File.expand_path(File.join(File.dirname(__FILE__),'..'))
+
+      copier = Conman::FileCopier.new(base,dir)
+      copier.copy_files('js','js')
+      copier.copy_files('js/lib','js')
+      copier.copy_files('css','css')
+
+      puts "Your slideshow is ready, run conman build to build it"
+    end
   end
 end
 
 desc          'File containing your slides'
 arg_name      "path"
-default_value "slides.md"
+default_value "slides"
 flag          [:f,'slides-file']
 
 desc 'Generate the presentation from your slides'
