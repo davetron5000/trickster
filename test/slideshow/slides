@@ -1,0 +1,30 @@
+Title of your slideshow
+!TITLE
+Title of your slideshow
+Subtitle
+Sub-sub title
+
+!SECTION: background=dddddd
+A section
+
+!BULLETS
+A bullet list
+* can use any
+- reasonable
++ bullet
+
+!CODE: callout=3,4,5
+class YourCode
+
+  def initialize(will)
+    @be_highlighted
+  end
+
+end
+
+!IMAGE
+rudy.png
+
+!COMMANDLINE
+> ls -ltr
+foo.rb  blah.txt crud.html

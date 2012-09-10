@@ -3,7 +3,7 @@ Feature: I can create a new slideshow
   I want to create the slideshow directory
   with everything i need
 
-  Scenario: App just runs
+  Scenario: Can init a new slideshow
     Given there is no directory named "slideshow"
     When I successfully run `conman init slideshow`
     Then a directory named "slideshow" should exist
@@ -16,7 +16,7 @@ Feature: I can create a new slideshow
     Subtitle
     Sub-sub title
 
-    !SECTION
+    !SECTION: background=dddddd
     A section
 
     !BULLETS
@@ -25,7 +25,7 @@ Feature: I can create a new slideshow
     - reasonable
     + bullet
 
-    !CODE callout=3,4,5
+    !CODE: callout=3,4,5
     class YourCode
 
       def initialize(will)

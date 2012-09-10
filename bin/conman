@@ -25,7 +25,7 @@ Title of your slideshow
 Subtitle
 Sub-sub title
 
-!SECTION
+!SECTION: background=dddddd
 A section
 
 !BULLETS
@@ -34,7 +34,7 @@ A bullet list
 - reasonable
 + bullet
 
-!CODE callout=3,4,5
+!CODE: callout=3,4,5
 class YourCode
 
   def initialize(will)
@@ -55,11 +55,6 @@ EOF
   end
 end
 
-desc          'File containing your slides'
-arg_name      "path"
-default_value "slides"
-flag          [:f,'slides-file']
-
 desc 'Generate the presentation from your slides'
 command :build do |c|
   c.desc          'Name of the generated HTML file'
@@ -67,8 +62,14 @@ command :build do |c|
   c.default_value 'index.html'
   c.flag          [:o,'output-file']
 
+  c.desc          'File containing your slides'
+  c.arg_name      "file"
+  c.default_value "slides"
+  c.flag          [:f,'slides-file']
+
+
   c.action do |global_options,options,args|
-    lines  = File.open(global_options[:'slides-file']).readlines.map(&:chomp)
+    lines  = File.open(options[:'slides-file']).readlines.map(&:chomp)
     parser = Conman::SlideParser.new(lines,Conman::SlideRenderer.new)
     body   = parser.body
     title  = parser.title

@@ -9,6 +9,12 @@ Given /^there is no directory named "(.*?)"$/ do |dir|
   FileUtils.rm_rf(dir)
 end
 
+Given /^a slideshow in "(.*?)"$/ do |dir|
+  FileUtils.rm_rf("tmp/aruba/#{dir}")
+  FileUtils.mkdir_p("tmp/aruba") unless File.exists?("tmp/aruba")
+  FileUtils.cp_r("test/slideshow","tmp/aruba/#{dir}")
+end
+
 Then /^the file "(.*?)" should contain:$/ do |file, partial_content|
   check_file_content(file, partial_content, true)
 end
