@@ -17,6 +17,7 @@ var ConmanDefaultConfig = {
                     8],  // delete
   startOverKeycodes: [66], // Kensington presenter down/stop
   /** These keycodes, if encountered, will not be sent along
+      to the browser.  Useful if there might be some vertical
       to the browser.  Useful if there might be some vertical 
       scrolling and 32/33/34 would otherwise scroll */
   keyCodesPreventingDefault: [ 34, 32, 33 ]
@@ -106,9 +107,13 @@ var ConmanLoader = function(config,functions) {
       Conman.previousSlide = Conman.currentSlide;
     }
     afterChanges = Utils.f(afterChanges);
-    currentSlide().fadeOut(config.transitionTime / 2, function() {
+    var transitionTime = config.transitionTime / 2;
+    if (currentSlide().attr("data-transition")) {
+      transitionTime = parseInt(currentSlide().attr("data-transitionTime"));
+    }
+    currentSlide().fadeOut(transitionTime, function() {
       applySlideClassToBody(currentSlide(nextSlide));
-      currentSlide(nextSlide).fadeIn(config.transitionTime / 2, function() {
+      currentSlide(nextSlide).fadeIn(transitionTime, function() {
         Conman.currentSlide = nextSlide;
         window.history.replaceState({},"",document.URL.replace(/#.*$/,"") + "#" + Conman.currentSlide);
         if (currentSlide().hasClass("IMAGE")) {

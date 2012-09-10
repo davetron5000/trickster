@@ -27,17 +27,25 @@ module Conman
       slide_type,options = slide_type.split(/:/)
 
       content = content[0..-2] if content[-1] =~ /^\s*$/
-      slide.puts "<section class='#{slide_type}'#{background_data(options)}>"
+      slide.puts "<section class='#{slide_type}'#{background_data(options)}#{transition_data(options)}>"
       RENDERERS[slide_type].render(slide,content,options)
       slide.puts "</section>"
     end
 
+    def transition_data(options)
+      data_attribute('transition',options)
+    end
+
     def background_data(options)
-      background = ''
-      if options =~ /background=([^\s]+)/
-        background = " data-background='#{$1}'"
+      data_attribute('background',options)
+    end
+
+    def data_attribute(attribute,options)
+      attribute_element = ''
+      if options =~ /#{attribute}=([^\s]+)/
+        attribute_element = " data-#{attribute}='#{$1}'"
       end
-      background
+      attribute_element
     end
   end
 end

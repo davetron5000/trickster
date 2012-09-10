@@ -57,6 +57,20 @@ class SlideRendererTest < Clean::Test::TestCase
         assert_content(slide_type,"<h1>#{@content[0]}</h1>",@renderer.content,@background)
       }
     end
+    test_that "a #{slide_type} slide a transition time data element if specified in the options" do
+      Given {
+        @content = [
+          any_string,
+        ]
+        @transition = any_int
+      }
+      When {
+        @renderer.render_slide(slide_type + ": transition=#{@transition}",@content)
+      }
+      Then {
+        assert_content(slide_type,"<h1>#{@content[0]}</h1>",@renderer.content,nil,@transition)
+      }
+    end
   end
 
   test_that "an image just has its first line rendered in an img tag" do
@@ -217,9 +231,9 @@ class SlideRendererTest < Clean::Test::TestCase
 
 private
 
-  def assert_content(slide_type,lines,content,background_attribute=nil)
+  def assert_content(slide_type,lines,content,background_attribute=nil,transition_attribute=nil)
     expected_content = [
-      "<section class='#{slide_type}'#{background_attribute.nil? ? '' : " data-background='#{background_attribute}'"}>",
+      "<section class='#{slide_type}'#{extra_attributes(background_attribute,transition_attribute)}>",
       lines,
       "</section>",
       "",
@@ -227,4 +241,10 @@ private
     assert_equal expected_content,content
   end
 
+  def extra_attributes(background_attribute,transition_attribute)
+    background = background_attribute.nil? ? '' : " data-background='#{background_attribute}'"
+    transition = transition_attribute.nil? ? '' : " data-transition='#{transition_attribute}'"
+
+    return background + transition
+  end
 end
