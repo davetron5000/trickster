@@ -165,7 +165,7 @@ class SlideRendererTest < Clean::Test::TestCase
       assert_content(
         "CODE",
         [
-          "<pre><code class='ruby' data-strikeouts='' data-callout-lines=''>#{@code[0]}",
+          "<pre><code data-strikeouts='' data-callout-lines=''>#{@code[0]}",
           @code[1],
           @code[2],
           "#{@code[3]}</code></pre>",
@@ -173,6 +173,32 @@ class SlideRendererTest < Clean::Test::TestCase
         @renderer.content)
     }
   end
+  test_that "CODE uses the language specified in the options" do
+    Given {
+      @code = [
+        "#{any_string}",
+        "  #{any_string}",
+        "    #{any_string} #{any_string}",
+        "#{any_string}",
+      ]
+      @language = any_string
+    }
+    When {
+      @renderer.render_slide("CODE: language=#{@language}",@code)
+    }
+    Then {
+      assert_content(
+        "CODE",
+        [
+          "<pre><code class='#{@language}' data-strikeouts='' data-callout-lines=''>#{@code[0]}",
+          @code[1],
+          @code[2],
+          "#{@code[3]}</code></pre>",
+        ],
+        @renderer.content)
+    }
+  end
+
   test_that "CODE that has callouts, with strikouts, as those added to the proper data attributes" do
     Given {
       @code = [
@@ -189,7 +215,7 @@ class SlideRendererTest < Clean::Test::TestCase
       assert_content(
         "CODE",
         [
-          "<pre><code class='ruby' data-strikeouts='2' data-callout-lines='1,2,3'>#{@code[0]}",
+          "<pre><code data-strikeouts='2' data-callout-lines='1,2,3'>#{@code[0]}",
           @code[1],
           @code[2],
           "#{@code[3]}</code></pre>",
@@ -220,7 +246,7 @@ class SlideRendererTest < Clean::Test::TestCase
       assert_content(
         "CODE",
         [
-          "<pre><code class='ruby' data-strikeouts='' data-callout-lines=''>#{@code[0]}",
+          "<pre><code data-strikeouts='' data-callout-lines=''>#{@code[0]}",
           @code[1],
           @code[2],
           "#{@code[3]}</code></pre>",

@@ -59,6 +59,15 @@ The first line is the url to the image to show.
 
 If the first line starts with <tt>file://</tt>, the contents of this file is read in as the contents of the code block.  Otherwise, the entire contents of the slide is verbatim put into a +pre+ and then +code+ block.  Syntax highlighting is done using a modified version of +highlight.js+.  This modification demarcates each line of the code, and allows you to show line numbers and callout particular lines.
 
+=== Language
+
+By default, no language is specified for highlighting, so +highlight.js+ will make a guess.  If you'd like to be explicit, use the +language+ option, e.g.
+
+    !CODE language=scala
+    def doit(x:String) = {
+      "foo"
+    }
+
 === Callouts
 
 A code slide accepts an option of +callout+ which is a comma-delimited list of the lines of code to "call out" with special styling.  This is useful if you are talking about particular lines, or are demonstrating new lines having been added to a previous example.
