@@ -115,21 +115,6 @@ var ConmanLoader = function(config,functions) {
       currentSlide(nextSlide).fadeIn(transitionTime, function() {
         Conman.currentSlide = nextSlide;
         window.history.replaceState({},"",document.URL.replace(/#.*$/,"") + "#" + Conman.currentSlide);
-        if (currentSlide().hasClass("IMAGE")) {
-          var img    = currentSlide().find("img");
-          var width  = browserWindow().width  - config.padding;
-          var height = browserWindow().height - config.padding;
-          var widthDiff = img.width() - width;
-          var heightDiff = img.height() - height;
-          if ((widthDiff > 0) || (heightDiff > 0)) {
-            if (widthDiff > heightDiff) {
-              img.width(width);
-            }
-            else {
-              img.height(height);
-            }
-          }
-        }
         afterChanges();
       });
     });
@@ -139,9 +124,7 @@ var ConmanLoader = function(config,functions) {
     slides().each(function(index,element) {
       // Order matters here
       var sizeToFit = Sizer.sizeFunction(browserWindow().width,browserWindow().height);
-      if (!$(element).hasClass("IMAGE")) {
-        sizeToFit($(element));
-      }
+      sizeToFit($(element));
     });
   }
 

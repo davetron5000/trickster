@@ -55,57 +55,80 @@ var Sizer = function() {
     return shrinkElement(element,10,shouldShrink);
   }
 
+  function resizeImageSlide(slide,maxWidth,maxHeight) {
+    var img    = slide.find("img");
+    var width  = maxWidth;
+    var height = maxHeight;
+    var widthDiff = img.width() - width;
+    var heightDiff = img.height() - height;
+    if ((widthDiff > 0) || (heightDiff > 0)) {
+      if (widthDiff > heightDiff) {
+        img.width(width);
+      }
+      else {
+        img.height(height);
+      }
+    }
+  }
+
+  function increaseSize(element,fontSize) {
+    if (element.hasClass("COMMANDLINE")) {
+      element.find(".cli-element").each(function(index,thisElement) {
+        $(thisElement).css("display","inline")
+      });
+    }
+
+    element.css("font-size",fontSize);
+    var results = [scrollWidth(element),element.height()];
+
+    if (element.hasClass("COMMANDLINE")) {
+      element.find(".cli-element").each(function(index,thisElement) {
+        $(thisElement).css("display","none")
+      });
+    }
+    return results;
+  }
+
+  function resizeNonImageSlide(element,maxWidth,maxHeight) {
+    var currentFontSize = parseInt(element.css("font-size"));
+    var currentSize     = increaseSize(element,currentFontSize);
+    var newFontSize     = currentFontSize + 10;
+
+    for(var i=0;i<3;i = i + 1) {
+      if (newFontSize > currentFontSize) {
+        newSize   = increaseSize(element,newFontSize);
+        rise      = newFontSize - currentFontSize;
+        runWidth  = newSize[0]  - currentSize[0];
+        runHeight = newSize[1]  - currentSize[1];
+
+        currentFontSize = newFontSize;
+        currentSize = newSize;
+        if (isCodeSlide(element)) {
+          element.css("margin-top",-1 * newFontSize);
+          newFontSize = Math.floor(rise * maxHeight / runHeight);
+        }
+        else if (element.hasClass("BULLETS")) {
+          newFontSize = Math.floor(rise * maxHeight / runHeight);
+        }
+        else {
+          newFontSize = Math.floor((rise * maxWidth / runWidth, rise * maxHeight / runHeight) / 2);
+        }
+      }
+    }
+    shrinkToPreventWrapping(element);
+    shrinkToFitWidth(element,maxWidth);
+    shrinkToFitHeight(element,maxHeight);
+  }
+
   return {
     sizeFunction: function(maxWidth,maxHeight) {
       return function(element) {
-        function increaseSize(element,fontSize) {
-          if (element.hasClass("COMMANDLINE")) {
-            element.find(".cli-element").each(function(index,thisElement) {
-              $(thisElement).css("display","inline")
-            });
-          }
-
-          element.css("font-size",fontSize);
-          var results = [scrollWidth(element),element.height()];
-
-          if (element.hasClass("COMMANDLINE")) {
-            element.find(".cli-element").each(function(index,thisElement) {
-              $(thisElement).css("display","none")
-            });
-          }
-          return results;
+        if (element.hasClass("IMAGE")) {
+          resizeImageSlide(element,maxWidth,maxHeight);
         }
-        var currentFontSize,currentSize,newFontSize,newSize,rise,runWidth,runHeight;
-
-        currentFontSize = parseInt(element.css("font-size"));
-        currentSize = increaseSize(element,currentFontSize);
-        newFontSize = currentFontSize + 10;
-
-        for(var i=0;i<3;i = i + 1) {
-          if (newFontSize > currentFontSize) {
-            newSize = increaseSize(element,newFontSize);
-
-            rise = newFontSize - currentFontSize;
-            runWidth = newSize[0] - currentSize[0];
-            runHeight = newSize[1] - currentSize[1];
-
-            currentFontSize = newFontSize;
-            currentSize = newSize;
-            if (isCodeSlide(element)) {
-              element.css("margin-top",-1 * newFontSize);
-              newFontSize = Math.floor(rise * maxHeight / runHeight);
-            }
-            else if (element.hasClass("BULLETS")) {
-              newFontSize = Math.floor(rise * maxHeight / runHeight);
-            }
-            else {
-              newFontSize = Math.floor((rise * maxWidth / runWidth, rise * maxHeight / runHeight) / 2);
-            }
-          }
+        else {
+          resizeNonImageSlide(element,maxWidth,maxHeight);
         }
-        shrinkToPreventWrapping(element);
-        shrinkToFitWidth(element,maxWidth);
-        shrinkToFitHeight(element,maxHeight);
       };
     }
   };
