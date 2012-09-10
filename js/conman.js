@@ -18,7 +18,6 @@ var ConmanDefaultConfig = {
   startOverKeycodes: [66], // Kensington presenter down/stop
   /** These keycodes, if encountered, will not be sent along
       to the browser.  Useful if there might be some vertical
-      to the browser.  Useful if there might be some vertical 
       scrolling and 32/33/34 would otherwise scroll */
   keyCodesPreventingDefault: [ 34, 32, 33 ]
 };
@@ -138,6 +137,7 @@ var ConmanLoader = function(config,functions) {
 
   function sizeAllToFit() {
     slides().each(function(index,element) {
+      // Order matters here
       var sizeToFit = Sizer.sizeFunction(browserWindow().width,browserWindow().height);
       if (!$(element).hasClass("IMAGE")) {
         sizeToFit($(element));
@@ -145,6 +145,20 @@ var ConmanLoader = function(config,functions) {
     });
   }
 
+  function setupKeyBindings() {
+    bindKeys(config.advanceKeycodes,Conman.advance);
+    bindKeys(config.backKeycodes,Conman.back);
+    bindKeys(config.startOverKeycodes,Conman.startOver);
+    preventDefaultKeyCodeAction(config.keyCodesPreventingDefault);
+    bindKeys([189],Conman.shrink);   // -
+    bindKeys([187],Conman.embiggen); // +
+  }
+
+  function hideAllSlides() {
+    $("section").css("display","none");
+    $("li").css("visibility","hidden");
+    $("section.COMMANDLINE .cli-element").css("display","none");
+  }
 
   var bullets = ConmanBullets(currentSlide,config);
   return {
@@ -157,17 +171,10 @@ var ConmanLoader = function(config,functions) {
     load: function() {
       Conman.totalSlides = slides().length;
       initCurrentSlide();
-      bindKeys(config.advanceKeycodes,Conman.advance);
-      bindKeys(config.backKeycodes,Conman.back);
-      bindKeys(config.startOverKeycodes,Conman.startOver);
-      preventDefaultKeyCodeAction(config.keyCodesPreventingDefault);
-      bindKeys([189],Conman.shrink);   // -
-      bindKeys([187],Conman.embiggen); // +
+      setupKeyBindings();
       syntaxHighlighter().highlight();
       sizeAllToFit();
-      $("section").css("display","none");
-      $("li").css("visibility","hidden");
-      $("section.COMMANDLINE .cli-element").css("display","none");
+      hideAllSlides();
       currentSlide().fadeIn(config.transitionTime / 2);
     },
 
