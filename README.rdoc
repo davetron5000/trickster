@@ -98,5 +98,74 @@ These slides take the first three lines of content and display them in an +H1+, 
 
 = CLI
 
-:include:conman.rdoc
+== conman - Bootstrap, generate, and manage your conman presentation
+
+v0.0.1
+
+=== Global Options
+=== --help
+Show this message
+
+
+
+
+=== --version
+
+
+
+
+
+=== Commands
+==== build 
+Generate the presentation from your slides
+
+
+
+===== Options
+===== -f file
+
+File containing your slides
+
+[Aliases] --slides-file
+[Default Value] slides
+
+
+===== -o file
+
+Name of the generated HTML file
+
+[Aliases] --output-file
+[Default Value] index.html
+
+
+==== help command
+Shows a list of commands or help for one command
+
+
+Gets help for the application or its commands. Can also list the commands in a way helpful to creating a bash-style completion function
+==== init dir_name
+Create a new conman presentation
+
+
+This will create a completely self-contained presentation that can be run just from the files
+in the directory you name.  It will have a static copy of the JavaScript files, JavaScript third-party
+libraries and CSS files you need to run your conman application.
+
+You can examine the file `slides` to see some examples of how to format your
+presentation.  You can run `conman build` in the directory to create the HTML
+file from your slides.
+
+Note that if you upgrade conman, you should run `conmand update` in your slide directory
+to get the latest JavaScript and CSS files.
+==== update [dir_name]
+Update an existing slideshow with the latest Conman JS/CSS files
+
+
+Run this after you've upgraded conman and want to get the latest features.  Since your 
+slideshow is entirely self-contained, when you upgrade conmand, your static JavaScript and
+CSS files will be out of date.
+
+Note that `styles.css`, which was provided by conman as a basis for styling, will not
+be touched, and your customizations will remain. All other files that conman gave you
+when you ran `conman init` will be overwritten.
 

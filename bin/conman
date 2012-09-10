@@ -12,6 +12,18 @@ program_desc 'Bootstrap, generate, and manage your conman presentation'
 version Conman::VERSION
 
 desc 'Create a new conman presentation'
+long_desc <<EOS
+This will create a completely self-contained presentation that can be run just from the files
+in the directory you name.  It will have a static copy of the JavaScript files, JavaScript third-party
+libraries and CSS files you need to run your conman application.
+
+You can examine the file `slides` to see some examples of how to format your
+presentation.  You can run `conman build` in the directory to create the HTML
+file from your slides.
+
+Note that if you upgrade conman, you should run `conmand update` in your slide directory
+to get the latest JavaScript and CSS files.
+EOS
 arg_name 'dir_name'
 command :init do |c|
   c.action do |global_options,options,args|
@@ -52,6 +64,30 @@ EOF
 
       puts "Your slideshow is ready, run conman build to build it"
     end
+  end
+end
+
+desc 'Update an existing slideshow with the latest Conman JS/CSS files'
+long_desc <<EOS
+Run this after you've upgraded conman and want to get the latest features.  Since your 
+slideshow is entirely self-contained, when you upgrade conmand, your static JavaScript and
+CSS files will be out of date.
+
+Note that `styles.css`, which was provided by conman as a basis for styling, will not
+be touched, and your customizations will remain. All other files that conman gave you
+when you ran `conman init` will be overwritten.
+EOS
+arg_name '[dir_name]'
+command :update do |c|
+  c.action do |global_options,options,args|
+    dir = args.shift
+    dir = '.' if dir.nil?
+    base = File.expand_path(File.join(File.dirname(__FILE__),'..'))
+
+    copier = Conman::FileCopier.new(base,dir)
+    copier.copy_files('js','js')
+    copier.copy_files('js/lib','js')
+    copier.copy_files('css','css', :except => "styles.css")
   end
 end
 

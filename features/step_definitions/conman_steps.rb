@@ -35,3 +35,28 @@ Then /^the directory "(.*?)" should contain all the conman CSS files and support
     step %{a file named "#{dir}/#{css_file}" should exist}
   end
 end
+
+Given /^the JS files and CSS files in "(.*?)" are out\-of\-date$/ do |dir|
+  FileUtils.rm("tmp/aruba/#{dir}/js/conman.js")
+  FileUtils.rm("tmp/aruba/#{dir}/js/sizer.js")
+  FileUtils.rm("tmp/aruba/#{dir}/js/bullets.js")
+  FileUtils.rm("tmp/aruba/#{dir}/css/normalize.css")
+end
+
+Then /^the JS files and CSS files in "(.*?)" should be up\-to\-date$/ do |dir|
+  Dir["js/*.js"].each do |js_file|
+    File.exist?("tmp/aruba/#{dir}/#{js_file}").should == true
+  end
+  Dir["js/lib/*.js"].each do |js_file|
+    File.exist?("tmp/aruba/#{dir}/#{js_file}").should == true
+  end
+  Dir["css/*.css"].each do |css_file|
+    File.exist?("tmp/aruba/#{dir}/#{css_file}").should == true
+  end
+end
+
+Then /^"(.*?)" in "(.*?)" should not have been touched$/ do |file,dir|
+  original = File.read(file)
+  in_slideshow = File.read("tmp/aruba/#{dir}/#{file}")
+  original.should_not == in_slideshow
+end
