@@ -46,6 +46,7 @@ Also note that each slide will be in a +section+ tag, with the CSS class of its 
 == options
 
 background:: although you can customize each slide based on its CSS class, this option allows you to customize the background of this particular slide.  This is useful for IMAGE slides where you might want to better match the image's colors
+transition:: number of milliseconds to transition to the *next* slide.  The default is in the config object, but this can override it per slide.
 
 == Slide Types
 
@@ -76,9 +77,20 @@ Further, if the line number is preceded with a dash (e.g. <tt>-3</tt>), that lin
 
 == COMMANDLINE
 
-This slide is for showing command-line invocations and results.  It's currently implemented in a pretty inflexible way, but the idea is that each command-line command is a line starting with a <tt>></tt> or <tt>%</tt>.  The line following is the output of that command.  When you play the presentation, the commands are "typewritered" out, and the results displayed automatically.
+This slide is for showing command-line invocations and results. It is assumed to start with a CLI invocation and that such invocations are followed by results, that can be many lines.  When you present the slideshow, the command will be output in a "typewriter" style, after which the result will be shown automatically, with each command acting like a "bullet" to be revealed.
 
-<b>This currently only works if you every line as a command and every other line as a result.  Sorry</b>
+=== Example
+
+    !COMMANDLINE
+    > ls -l
+    -rw-r--r--  1 davec  staff     25 Aug 25 14:49 Gemfile
+    -rw-r--r--  1 davec  staff   1563 Sep  9 16:11 Gemfile.lock
+    -rw-r--r--  1 davec  staff   4136 Sep 10 18:54 README.rdoc
+    drwxr-xr-x  3 davec  staff    102 Sep 10 18:50 tmp
+    > vim Gemfile
+    editing Gemfile
+
+Prompts can be <tt>></tt>, <tt>%</tt>, and <tt>#</tt>.
 
 === Any other type
 
