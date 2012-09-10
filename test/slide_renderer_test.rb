@@ -139,10 +139,10 @@ class SlideRendererTest < Clean::Test::TestCase
       assert_content(
         "COMMANDLINE",
         [
-          "<pre><code class='no-highlight'><span class='cli-prompt'>&gt;</span> <span class='cli-element cli-command'>#{@command1}</span>",
-          "<span class='cli-element cli-result'>#{@result1}</span>",
-          "<span class='cli-prompt'>%</span> <span class='cli-element cli-command'>#{@command2}</span>",
-          "<span class='cli-element cli-result'>#{@result2}</span>",
+          "<pre><code class='no-highlight'><span class='cli-prompt'>&gt;</span> <span class='cli-element cli-command cli-line'>#{@command1}</span>",
+          "<span class='cli-element cli-result'><span class='cli-line'>#{@result1}</span></span>",
+          "<span class='cli-prompt'>%</span> <span class='cli-element cli-command cli-line'>#{@command2}</span>",
+          "<span class='cli-element cli-result'><span class='cli-line'>#{@result2}</span></span>",
           "</code></pre>",
         ],
         @renderer.content)
@@ -173,12 +173,12 @@ class SlideRendererTest < Clean::Test::TestCase
       assert_content(
         "COMMANDLINE",
         [
-          "<pre><code class='no-highlight'><span class='cli-prompt'>&gt;</span> <span class='cli-element cli-command'>#{@command1}</span>",
-          "<span class='cli-element cli-result'>#{@result1a}",
-          "#{@result1b}</span>",
-          "<span class='cli-prompt'>%</span> <span class='cli-element cli-command'>#{@command2}</span>",
-          "<span class='cli-element cli-result'>#{@result2}</span>",
-          "<span class='cli-prompt'>&gt;</span> <span class='cli-element cli-command'>#{@command3}</span>",
+          "<pre><code class='no-highlight'><span class='cli-prompt'>&gt;</span> <span class='cli-element cli-command cli-line'>#{@command1}</span>",
+          "<span class='cli-element cli-result'><span class='cli-line'>#{@result1a}</span>",
+          "<span class='cli-line'>#{@result1b}</span></span>",
+          "<span class='cli-prompt'>%</span> <span class='cli-element cli-command cli-line'>#{@command2}</span>",
+          "<span class='cli-element cli-result'><span class='cli-line'>#{@result2}</span></span>",
+          "<span class='cli-prompt'>&gt;</span> <span class='cli-element cli-command cli-line'>#{@command3}</span>",
           "</code></pre>",
         ],
         @renderer.content)

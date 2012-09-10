@@ -7,10 +7,12 @@ var Sizer = function() {
     var heights = {};
     var selector = ".line";
     if (element.find(selector).length == 0) {
-      selector = ".cli-element";
+      selector = ".cli-line";
     }
     element.find(selector).each(function(index,thisElement) {
-      heights[$(thisElement).height()] = true;
+      if ($(thisElement).height() != 0) {
+        heights[$(thisElement).height()] = true;
+      }
     });
     return Object.keys(heights).length > 1;
   }
@@ -20,10 +22,13 @@ var Sizer = function() {
    * @param maxTries int max attempts at shrinking (controls for infinite loops)
    * @param shouldShrink function given the element, returns true if the element should be shrunken more
    */
-  function shrinkElement(element,maxTries,shouldShrink) {
+  function shrinkElement(element,maxTries,shouldShrink,step) {
     var fontSize = parseInt(element.css("font-size"));
     var count = 0;
     var STEP = 10;
+    if (step) {
+      STEP = step;
+    }
     while (shouldShrink(element) && (count < maxTries)) {
       fontSize -= STEP;
       element.css("font-size",fontSize);
@@ -48,11 +53,14 @@ var Sizer = function() {
     return shrinkElement(element,10,shouldShrink);
   }
   function shrinkToFitHeight(element,maxHeight) {
-    if (isCodeSlide(element)) { return false; }
+    var step = 10;
+    if (isCodeSlide(element)) {
+      step = 4;
+    }
     var shouldShrink = function(elem) {
       return (scrollHeight(element) > maxHeight);
     };
-    return shrinkElement(element,10,shouldShrink);
+    return shrinkElement(element,10,shouldShrink,step);
   }
 
   function resizeImageSlide(slide,maxWidth,maxHeight) {
@@ -71,25 +79,30 @@ var Sizer = function() {
     }
   }
 
-  function increaseSize(element,fontSize) {
+  function preResize(element) {
     if (element.hasClass("COMMANDLINE")) {
       element.find(".cli-element").each(function(index,thisElement) {
         $(thisElement).css("display","inline")
       });
     }
+  }
 
-    element.css("font-size",fontSize);
-    var results = [scrollWidth(element),element.height()];
-
+  function postResize(element) {
     if (element.hasClass("COMMANDLINE")) {
       element.find(".cli-element").each(function(index,thisElement) {
         $(thisElement).css("display","none")
       });
     }
+  }
+
+  function increaseSize(element,fontSize) {
+    element.css("font-size",fontSize);
+    var results = [scrollWidth(element),element.height()];
     return results;
   }
 
   function resizeNonImageSlide(element,maxWidth,maxHeight) {
+    preResize(element);
     var currentFontSize = parseInt(element.css("font-size"));
     var currentSize     = increaseSize(element,currentFontSize);
     var newFontSize     = currentFontSize + 10;
@@ -118,6 +131,7 @@ var Sizer = function() {
     shrinkToPreventWrapping(element);
     shrinkToFitWidth(element,maxWidth);
     shrinkToFitHeight(element,maxHeight);
+    postResize(element);
   }
 
   return {

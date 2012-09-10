@@ -5,7 +5,7 @@ module Conman
         io.print "<pre><code class='no-highlight'>"
         content = split_by_commands_and_results(content)
         content.each do |(prompt,command,result)|
-          io.puts "<span class='cli-prompt'>#{prompt}</span> <span class='cli-element cli-command'>#{command}</span>"
+          io.puts "<span class='cli-prompt'>#{prompt}</span> <span class='cli-element cli-command cli-line'>#{command}</span>"
           unless result.empty?
             io.puts "<span class='cli-element cli-result'>#{result.join("\n")}</span>"
           end
@@ -25,7 +25,7 @@ module Conman
             results << current_command_response unless current_command_response.empty?
             current_command_response = [prompt.gsub(">","&gt;"),command,[]]
           else
-            current_command_response[2] << line
+            current_command_response[2] << "<span class='cli-line'>#{line}</span>"
           end
         end
         results << current_command_response unless current_command_response.empty?

@@ -234,10 +234,9 @@ describe("Sizer",function() {
       sizeFunction(element);
 
       expect(element.fontSizes.length).toBe(4);
-      expect(element.displays.length).toBe(6);
+      expect(element.displays.length).toBe(2);
       expect(element.displays[0]).toBe("inline");
       expect(element.displays[1]).toBe("none");
-      expect(element.displays[5]).toBe("none");
       expect(element.fontSizes[element.fontSizes.length - 1]).toBe(76);
       expect(element.marginTops[element.marginTops.length - 1]).toBe(-76);
     });
