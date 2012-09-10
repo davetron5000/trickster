@@ -160,7 +160,7 @@ var ConmanLoader = function(config,functions) {
     $("section.COMMANDLINE .cli-element").css("display","none");
   }
 
-  var bullets = ConmanBullets(currentSlide,config);
+  var Bullets = ConmanBullets(currentSlide,config);
   return {
     /** State */
     currentSlide:  0,
@@ -169,6 +169,7 @@ var ConmanLoader = function(config,functions) {
 
     /** Set everything up for the slideshow */
     load: function() {
+      // Order matters here
       Conman.totalSlides = slides().length;
       initCurrentSlide();
       setupKeyBindings();
@@ -197,24 +198,24 @@ var ConmanLoader = function(config,functions) {
 
     startOver: function() {
       if (Conman.currentSlide == 0)  {
-        changeSlides(Conman.previousSlide, bullets.rehideBullets());
+        changeSlides(Conman.previousSlide, Bullets.rehideBullets());
       }
       else {
-        changeSlides(0,bullets.rehideBullets());
+        changeSlides(0,Bullets.rehideBullets());
       }
     },
 
     /** Move forward one slide */
     advance: function() {
-      if (bullets.hasBulletsToAdvanceFirst()) {
-        bullets.advanceToNextBullet();
+      if (Bullets.hasBulletsToAdvanceFirst()) {
+        Bullets.advanceToNextBullet();
       }
       else {
         var nextSlide = Conman.currentSlide + 1;
         if (nextSlide >= Conman.totalSlides) {
           nextSlide = 0;
         }
-        changeSlides(nextSlide, bullets.rehideBullets());
+        changeSlides(nextSlide, Bullets.rehideBullets());
       }
     },
 
@@ -224,7 +225,7 @@ var ConmanLoader = function(config,functions) {
       if (nextSlide < 0) {
         nextSlide = Conman.totalSlides - 1;
       }
-      changeSlides(nextSlide, bullets.rehideBullets());
+      changeSlides(nextSlide, Bullets.rehideBullets());
     }
   };
 };
