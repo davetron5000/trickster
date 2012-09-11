@@ -20,6 +20,7 @@ js/lib/underscore-1.3.3.min.js
 js/sizer.js
 js/trickster.js
 js/utils.js
+erb/index.html.erb
 css/highlight-solarized_light.min.css
 css/normalize.css
 css/styles.css
@@ -46,5 +47,4 @@ lib/trickster.rb
   s.add_development_dependency('jasmine-headless-webkit')
   s.add_development_dependency('clean_test')
   s.add_runtime_dependency('gli','2.0.0')
-  s.add_runtime_dependency('kramdown')
 end
