@@ -1,6 +1,6 @@
 = trickster
 
-Trickster is a developers in-browser presentation software.
+Trickster is a developer's in-browser presentation software.
 
 Instead of focusing on flashy transitions, it focuses to encourage making a good presentation that looks good on the big screen.  As such, each slide is dynamically sized to be as big as possible.  Code slides have syntax highlighting, and you can call out lines of interest very easily, as well as create animated command-line slides.
 
@@ -94,6 +94,26 @@ Prompts can be <tt>></tt>, <tt>%</tt>, and <tt>#</tt>.
 === Any other type
 
 These slides take the first three lines of content and display them in an +H1+, +H2+, and +H3+, respectively.  All other lines are ignored.
+
+== Delivering the Presentation
+
+Simply open `index.html` in your browser.  Your browser should be Safari or Chrome.
+
+Every time you reload, the presentation will be dynamically sized to the size of the browser, so you should configure your browser and monitor to the size of your presentation, then reload.
+
+Occasionally, Trickster will size the slides too larger or too small.  In that case, you can use "-" and "+" to resize the slides on the fly.  If you reload, the sizes will be reset.
+
+=== Keyboard Commands
+
+advance:: "j", space-bar, right-arrow, or the advance button on the Kensington Wireless Presenter.
+back:: "k", backspace, left-arrow, or the back button the Kensington Wireless Presenter.
+restart:: down/stop button on the Kensington Wireless Presenter.
+increase font-size:: "+" or "=" (font-size will be reset if you reload the page)
+decrease font-size:: "-" (font-size will be reset if you reload the page)
+
+== Tips
+
+Trickster discourages verbose slides with lots of text or lots of bullets. This is because these are aspects of terrible presentations.  Instead, create many more slides with fewer amounts of text.
 
 = CLI
 
