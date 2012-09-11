@@ -1,4 +1,4 @@
-var ConmanDefaultConfig = {
+var TricksterDefaultConfig = {
   /** Padding between max width and max font size */
   padding:          128,
   /** Time, in ms, to transition between slides */
@@ -21,11 +21,11 @@ var ConmanDefaultConfig = {
       scrolling and 32/33/34 would otherwise scroll */
   keyCodesPreventingDefault: [ 34, 32, 33 ]
 };
-/** Loads Conman.
- * config: configuration, or ConmanDefaultConfig to get the defaults
+/** Loads Trickster.
+ * config: configuration, or TricksterDefaultConfig to get the defaults
  * functions: override helper functions
  */
-var ConmanLoader = function(config,functions) {
+var TricksterLoader = function(config,functions) {
   var slides = Utils.fOr(functions.slides,function() {
     return $("section");
   });
@@ -77,7 +77,7 @@ var ConmanLoader = function(config,functions) {
 
   function currentSlide(whichSlide) {
     if (typeof whichSlide === "undefined") {
-      whichSlide = Conman.currentSlide;
+      whichSlide = Trickster.currentSlide;
     }
     return slides().eq(whichSlide);
   };
@@ -86,7 +86,7 @@ var ConmanLoader = function(config,functions) {
     var slideNumber = 0;
     if (document.location.hash !== "") {
       slideNumber = parseInt(document.location.hash.replace("#",""));
-      Conman.currentSlide = slideNumber;
+      Trickster.currentSlide = slideNumber;
     }
     applySlideClassToBody(currentSlide(slideNumber));
   };
@@ -102,8 +102,8 @@ var ConmanLoader = function(config,functions) {
   }
 
   function changeSlides(nextSlide,afterChanges) {
-    if ((nextSlide != 0) && (nextSlide != Conman.previousSlide)){
-      Conman.previousSlide = Conman.currentSlide;
+    if ((nextSlide != 0) && (nextSlide != Trickster.previousSlide)){
+      Trickster.previousSlide = Trickster.currentSlide;
     }
     afterChanges = Utils.f(afterChanges);
     var transitionTime = config.transitionTime / 2;
@@ -113,8 +113,8 @@ var ConmanLoader = function(config,functions) {
     currentSlide().fadeOut(transitionTime, function() {
       applySlideClassToBody(currentSlide(nextSlide));
       currentSlide(nextSlide).fadeIn(transitionTime, function() {
-        Conman.currentSlide = nextSlide;
-        window.history.replaceState({},"",document.URL.replace(/#.*$/,"") + "#" + Conman.currentSlide);
+        Trickster.currentSlide = nextSlide;
+        window.history.replaceState({},"",document.URL.replace(/#.*$/,"") + "#" + Trickster.currentSlide);
         afterChanges();
       });
     });
@@ -129,12 +129,12 @@ var ConmanLoader = function(config,functions) {
   }
 
   function setupKeyBindings() {
-    bindKeys(config.advanceKeycodes,Conman.advance);
-    bindKeys(config.backKeycodes,Conman.back);
-    bindKeys(config.startOverKeycodes,Conman.startOver);
+    bindKeys(config.advanceKeycodes,Trickster.advance);
+    bindKeys(config.backKeycodes,Trickster.back);
+    bindKeys(config.startOverKeycodes,Trickster.startOver);
     preventDefaultKeyCodeAction(config.keyCodesPreventingDefault);
-    bindKeys([189],Conman.shrink);   // -
-    bindKeys([187],Conman.embiggen); // +
+    bindKeys([189],Trickster.shrink);   // -
+    bindKeys([187],Trickster.embiggen); // +
   }
 
   function hideAllSlides() {
@@ -143,7 +143,7 @@ var ConmanLoader = function(config,functions) {
     $("section.COMMANDLINE .cli-element").css("display","none");
   }
 
-  var Bullets = ConmanBullets(currentSlide,config);
+  var Bullets = TricksterBullets(currentSlide,config);
   return {
     /** State */
     currentSlide:  0,
@@ -153,7 +153,7 @@ var ConmanLoader = function(config,functions) {
     /** Set everything up for the slideshow */
     load: function() {
       // Order matters here
-      Conman.totalSlides = slides().length;
+      Trickster.totalSlides = slides().length;
       initCurrentSlide();
       setupKeyBindings();
       syntaxHighlighter().highlight();
@@ -180,8 +180,8 @@ var ConmanLoader = function(config,functions) {
     },
 
     startOver: function() {
-      if (Conman.currentSlide == 0)  {
-        changeSlides(Conman.previousSlide, Bullets.rehideBullets());
+      if (Trickster.currentSlide == 0)  {
+        changeSlides(Trickster.previousSlide, Bullets.rehideBullets());
       }
       else {
         changeSlides(0,Bullets.rehideBullets());
@@ -194,8 +194,8 @@ var ConmanLoader = function(config,functions) {
         Bullets.advanceToNextBullet();
       }
       else {
-        var nextSlide = Conman.currentSlide + 1;
-        if (nextSlide >= Conman.totalSlides) {
+        var nextSlide = Trickster.currentSlide + 1;
+        if (nextSlide >= Trickster.totalSlides) {
           nextSlide = 0;
         }
         changeSlides(nextSlide, Bullets.rehideBullets());
@@ -204,9 +204,9 @@ var ConmanLoader = function(config,functions) {
 
     /** Move back one slide */
     back: function() {
-      var nextSlide = Conman.currentSlide - 1;
+      var nextSlide = Trickster.currentSlide - 1;
       if (nextSlide < 0) {
-        nextSlide = Conman.totalSlides - 1;
+        nextSlide = Trickster.totalSlides - 1;
       }
       changeSlides(nextSlide, Bullets.rehideBullets());
     }

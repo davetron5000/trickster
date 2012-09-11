@@ -1,4 +1,4 @@
-module Conman
+module Trickster
   class SlideParser
     attr_reader :title
     def initialize(lines,renderer)

@@ -1,5 +1,5 @@
 require 'stringio'
-module Conman
+module Trickster
   class SlideRenderer
     def initialize
       @body_io = StringIO.new

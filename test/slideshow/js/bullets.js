@@ -6,7 +6,7 @@
  *
  * @return Object an object containing functions for checking if there are bullets, advancing bullets, and hiding bullets.
  */
-var ConmanBullets = function(currentSlide,config) {
+var TricksterBullets = function(currentSlide,config) {
   var BULLET_SELECTORS = ["li",".cli-element"];
   var currentBullet = 0;
 

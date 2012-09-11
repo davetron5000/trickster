@@ -1,6 +1,6 @@
-# conman - create and present a nice presentation, quickly
+# trickster - create and present a nice presentation, quickly
 
-conman allows you to do a few things:
+trickster allows you to do a few things:
 
 * Author a presentation in Markdown instead of a GUI
 * Allow anyone to connect to your laptop to view the presentation on their screen

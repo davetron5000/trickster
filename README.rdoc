@@ -1,11 +1,11 @@
-= conman
+= trickster
 
-Conman is what should hopefully be me perfect in-browser presentation software.
+Trickster is what should hopefully be me perfect in-browser presentation software.
 
 The goals are ultimately to have each slide be as big as it can be, so that you don't have worry about
 custom screens, font-sizes, or maximizing space.
 
-It does this by compiling your presentation into an HTML file that, when loaded, will execute the Conman
+It does this by compiling your presentation into an HTML file that, when loaded, will execute the Trickster
 JavaScript, which will dynamically resize each slide to the biggest it can be based on the browser's current size.
 
 == Presentation Format
@@ -98,7 +98,7 @@ These slides take the first three lines of content and display them in an +H1+, 
 
 = CLI
 
-== conman - Bootstrap, generate, and manage your conman presentation
+== trickster - Bootstrap, generate, and manage your trickster presentation
 
 v0.0.1
 
@@ -144,28 +144,28 @@ Shows a list of commands or help for one command
 
 Gets help for the application or its commands. Can also list the commands in a way helpful to creating a bash-style completion function
 ==== init dir_name
-Create a new conman presentation
+Create a new trickster presentation
 
 
 This will create a completely self-contained presentation that can be run just from the files
 in the directory you name.  It will have a static copy of the JavaScript files, JavaScript third-party
-libraries and CSS files you need to run your conman application.
+libraries and CSS files you need to run your trickster application.
 
 You can examine the file `slides` to see some examples of how to format your
-presentation.  You can run `conman build` in the directory to create the HTML
+presentation.  You can run `trickster build` in the directory to create the HTML
 file from your slides.
 
-Note that if you upgrade conman, you should run `conmand update` in your slide directory
+Note that if you upgrade trickster, you should run `tricksterd update` in your slide directory
 to get the latest JavaScript and CSS files.
 ==== update [dir_name]
-Update an existing slideshow with the latest Conman JS/CSS files
+Update an existing slideshow with the latest Trickster JS/CSS files
 
 
-Run this after you've upgraded conman and want to get the latest features.  Since your 
-slideshow is entirely self-contained, when you upgrade conmand, your static JavaScript and
+Run this after you've upgraded trickster and want to get the latest features.  Since your 
+slideshow is entirely self-contained, when you upgrade tricksterd, your static JavaScript and
 CSS files will be out of date.
 
-Note that `styles.css`, which was provided by conman as a basis for styling, will not
-be touched, and your customizations will remain. All other files that conman gave you
-when you ran `conman init` will be overwritten.
+Note that `styles.css`, which was provided by trickster as a basis for styling, will not
+be touched, and your customizations will remain. All other files that trickster gave you
+when you ran `trickster init` will be overwritten.
 

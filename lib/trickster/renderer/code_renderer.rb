@@ -1,4 +1,4 @@
-module Conman
+module Trickster
   module Renderer
     class CodeRenderer
       def render(io,content,options)

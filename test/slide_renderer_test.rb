@@ -2,7 +2,7 @@ require 'test_helper.rb'
 
 class SlideRendererTest < Clean::Test::TestCase
   def setup
-    @renderer = Conman::SlideRenderer.new
+    @renderer = Trickster::SlideRenderer.new
   end
 
   NORMAL_TYPES = ["TITLE","SECTION","NORMAL"]

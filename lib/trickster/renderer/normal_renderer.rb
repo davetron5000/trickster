@@ -1,4 +1,4 @@
-module Conman
+module Trickster
   module Renderer
     class NormalRenderer
       def render(io,content,options)

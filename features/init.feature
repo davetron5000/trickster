@@ -5,7 +5,7 @@ Feature: I can create a new slideshow
 
   Scenario: Can init a new slideshow
     Given there is no directory named "slideshow"
-    When I successfully run `conman init slideshow`
+    When I successfully run `trickster init slideshow`
     Then a directory named "slideshow" should exist
     And a file named "slideshow/slides" should exist
     And the file "slideshow/slides" should contain:
@@ -35,7 +35,7 @@ Feature: I can create a new slideshow
     end
     """
     And a directory named "slideshow/js" should exist
-    And the directory "slideshow/js" should contain all the conman JavaScript files and support libs
+    And the directory "slideshow/js" should contain all the trickster JavaScript files and support libs
     And a directory named "slideshow/css" should exist
-    And the directory "slideshow/css" should contain all the conman CSS files and support stylesheets
-    And the output should contain "Your slideshow is ready, run conman build to build it"
+    And the directory "slideshow/css" should contain all the trickster CSS files and support stylesheets
+    And the output should contain "Your slideshow is ready, run trickster build to build it"

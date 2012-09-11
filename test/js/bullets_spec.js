@@ -19,12 +19,12 @@ describe("Bullets",function() {
     };
   }
   it("initially has bullets to advance if there is at least one bulleted item",function() {
-    var bullets = ConmanBullets(makeCurrentSlideFunction(1),{});
+    var bullets = TricksterBullets(makeCurrentSlideFunction(1),{});
 
     expect(bullets.hasBulletsToAdvanceFirst()).toBe(true);
   });
   it("initially has NO bullets to advance if there are no bulleted items",function() {
-    var bullets = ConmanBullets(makeCurrentSlideFunction(0),{});
+    var bullets = TricksterBullets(makeCurrentSlideFunction(0),{});
 
     expect(bullets.hasBulletsToAdvanceFirst()).toBe(false);
   });
@@ -71,7 +71,7 @@ describe("Bullets",function() {
           }
         };
       };
-      var bullets = ConmanBullets(currentSlide,{});
+      var bullets = TricksterBullets(currentSlide,{});
 
       bullets.advanceToNextBullet();
 

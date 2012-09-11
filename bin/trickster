@@ -1,27 +1,27 @@
 #!/usr/bin/env ruby
 
 require 'gli'
-require 'conman'
+require 'trickster'
 require 'erb'
 require 'fileutils'
 
 include GLI::App
 
-program_desc 'Bootstrap, generate, and manage your conman presentation'
+program_desc 'Bootstrap, generate, and manage your trickster presentation'
 
-version Conman::VERSION
+version Trickster::VERSION
 
-desc 'Create a new conman presentation'
+desc 'Create a new trickster presentation'
 long_desc <<EOS
 This will create a completely self-contained presentation that can be run just from the files
 in the directory you name.  It will have a static copy of the JavaScript files, JavaScript third-party
-libraries and CSS files you need to run your conman application.
+libraries and CSS files you need to run your trickster application.
 
 You can examine the file `slides` to see some examples of how to format your
-presentation.  You can run `conman build` in the directory to create the HTML
+presentation.  You can run `trickster build` in the directory to create the HTML
 file from your slides.
 
-Note that if you upgrade conman, you should run `conmand update` in your slide directory
+Note that if you upgrade trickster, you should run `tricksterd update` in your slide directory
 to get the latest JavaScript and CSS files.
 EOS
 arg_name 'dir_name'
@@ -57,25 +57,25 @@ end
 EOF
       base = File.expand_path(File.join(File.dirname(__FILE__),'..'))
 
-      copier = Conman::FileCopier.new(base,dir)
+      copier = Trickster::FileCopier.new(base,dir)
       copier.copy_files('js','js')
       copier.copy_files('js/lib','js')
       copier.copy_files('css','css')
 
-      puts "Your slideshow is ready, run conman build to build it"
+      puts "Your slideshow is ready, run trickster build to build it"
     end
   end
 end
 
-desc 'Update an existing slideshow with the latest Conman JS/CSS files'
+desc 'Update an existing slideshow with the latest Trickster JS/CSS files'
 long_desc <<EOS
-Run this after you've upgraded conman and want to get the latest features.  Since your 
-slideshow is entirely self-contained, when you upgrade conmand, your static JavaScript and
+Run this after you've upgraded trickster and want to get the latest features.  Since your 
+slideshow is entirely self-contained, when you upgrade tricksterd, your static JavaScript and
 CSS files will be out of date.
 
-Note that `styles.css`, which was provided by conman as a basis for styling, will not
-be touched, and your customizations will remain. All other files that conman gave you
-when you ran `conman init` will be overwritten.
+Note that `styles.css`, which was provided by trickster as a basis for styling, will not
+be touched, and your customizations will remain. All other files that trickster gave you
+when you ran `trickster init` will be overwritten.
 EOS
 arg_name '[dir_name]'
 command :update do |c|
@@ -84,7 +84,7 @@ command :update do |c|
     dir = '.' if dir.nil?
     base = File.expand_path(File.join(File.dirname(__FILE__),'..'))
 
-    copier = Conman::FileCopier.new(base,dir)
+    copier = Trickster::FileCopier.new(base,dir)
     copier.copy_files('js','js')
     copier.copy_files('js/lib','js')
     copier.copy_files('css','css', :except => "styles.css")
@@ -106,7 +106,7 @@ command :build do |c|
 
   c.action do |global_options,options,args|
     lines  = File.open(options[:'slides-file']).readlines.map(&:chomp)
-    parser = Conman::SlideParser.new(lines,Conman::SlideRenderer.new)
+    parser = Trickster::SlideParser.new(lines,Trickster::SlideRenderer.new)
     body   = parser.body
     title  = parser.title
 

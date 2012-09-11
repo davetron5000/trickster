@@ -4,18 +4,22 @@ require 'rubygems/package_task'
 require 'rdoc/task'
 require 'cucumber'
 require 'cucumber/rake/task'
+
+CLEAN << "test/slideshow/index.html"
+
 Rake::RDocTask.new do |rd|
   rd.main = "README.rdoc"
   rd.rdoc_files.include("README.rdoc","lib/**/*.rb","bin/**/*")
   rd.title = 'Your application title'
 end
 
-spec = eval(File.read('conman.gemspec'))
+spec = eval(File.read('trickster.gemspec'))
 
 Gem::PackageTask.new(spec) do |pkg|
 end
 CUKE_RESULTS = 'results.html'
 CLEAN << CUKE_RESULTS
+CLOBBER << 'tmp/aruba'
 desc 'Run features'
 Cucumber::Rake::Task.new(:features) do |t|
   opts = "features --format html -o #{CUKE_RESULTS} --format progress -x"

@@ -19,7 +19,7 @@ Then /^the file "(.*?)" should contain:$/ do |file, partial_content|
   check_file_content(file, partial_content, true)
 end
 
-Then /^the directory "(.*?)" should contain all the conman JavaScript files and support libs$/ do |dir|
+Then /^the directory "(.*?)" should contain all the trickster JavaScript files and support libs$/ do |dir|
   dir = dir.gsub(/\/js\/?/,'')
   Dir["js/*.js"].each do |js_file|
     step %{a file named "#{dir}/#{js_file}" should exist}
@@ -29,7 +29,7 @@ Then /^the directory "(.*?)" should contain all the conman JavaScript files and 
   end
 end
 
-Then /^the directory "(.*?)" should contain all the conman CSS files and support stylesheets$/ do |dir|
+Then /^the directory "(.*?)" should contain all the trickster CSS files and support stylesheets$/ do |dir|
   dir = dir.gsub(/\/css\/?/,'')
   Dir["css/*.css"].each do |css_file|
     step %{a file named "#{dir}/#{css_file}" should exist}
@@ -37,7 +37,7 @@ Then /^the directory "(.*?)" should contain all the conman CSS files and support
 end
 
 Given /^the JS files and CSS files in "(.*?)" are out\-of\-date$/ do |dir|
-  FileUtils.rm("tmp/aruba/#{dir}/js/conman.js")
+  FileUtils.rm("tmp/aruba/#{dir}/js/trickster.js")
   FileUtils.rm("tmp/aruba/#{dir}/js/sizer.js")
   FileUtils.rm("tmp/aruba/#{dir}/js/bullets.js")
   FileUtils.rm("tmp/aruba/#{dir}/css/normalize.css")

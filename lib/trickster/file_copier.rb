@@ -1,6 +1,6 @@
-module Conman
+module Trickster
   class FileCopier
-    # install_root:: where the root of conman's install is, to find files to copy
+    # install_root:: where the root of trickster's install is, to find files to copy
     # destination_root:: root of where we are copying to
     def initialize(install_root,destination_root)
       @install_root     = install_root

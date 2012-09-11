@@ -6,5 +6,5 @@ Feature: I can build my slideshow
   Scenario: Can build a slidehsow
     Given a slideshow in "test_slideshow"
     When I cd to "test_slideshow"
-    And I successfully run `conman build`
+    And I successfully run `trickster build`
     Then a file named "index.html" should exist

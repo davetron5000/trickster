@@ -1,4 +1,4 @@
-module Conman
+module Trickster
   module Renderer
     class BulletsRenderer
       def render(io,content,options)

@@ -19,7 +19,7 @@ class SlideParserTest < Clean::Test::TestCase
     Given {
       @title = any_string
       @lines = [ @title, any_string, any_string ]
-      @parser = Conman::SlideParser.new(@lines,nil)
+      @parser = Trickster::SlideParser.new(@lines,nil)
     }
     Then {
       assert_equal @title,@parser.title
@@ -37,7 +37,7 @@ class SlideParserTest < Clean::Test::TestCase
       }.flatten
       lines.unshift(any_string)
       @renderer = RememberingRenderer.new
-      @parser = Conman::SlideParser.new(lines,@renderer)
+      @parser = Trickster::SlideParser.new(lines,@renderer)
     }
     When {
       @resulting_content = @parser.body

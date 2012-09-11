@@ -1,4 +1,4 @@
-module Conman
+module Trickster
   module Renderer
     class CommandlineRenderer
       def render(io,content,options)
