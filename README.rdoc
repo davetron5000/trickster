@@ -1,9 +1,8 @@
 = trickster
 
-Trickster is what should hopefully be me perfect in-browser presentation software.
+Trickster is a developers in-browser presentation software.
 
-The goals are ultimately to have each slide be as big as it can be, so that you don't have worry about
-custom screens, font-sizes, or maximizing space.
+Instead of focusing on flashy transitions, it focuses to encourage making a good presentation that looks good on the big screen.  As such, each slide is dynamically sized to be as big as possible.  Code slides have syntax highlighting, and you can call out lines of interest very easily, as well as create animated command-line slides.
 
 It does this by compiling your presentation into an HTML file that, when loaded, will execute the Trickster
 JavaScript, which will dynamically resize each slide to the biggest it can be based on the browser's current size.
