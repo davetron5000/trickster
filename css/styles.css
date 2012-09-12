@@ -1,0 +1,68 @@
+/*
+ * This is where you can make custom styles for the visual
+ * aspects of your slideshow.
+ *
+ * You shouldn't do too much custom sizing here, as it may
+ * mess up the automatic sizing algorithm.
+ */
+section.TITLE, section.SECTION, section.IMAGE, section.NORMAL {
+  text-align: center;
+}
+
+body.COMMANDLINE {
+  background: black;
+}
+
+body.CODE {
+  background: #eee8d5;
+}
+
+section.BULLETS {
+  margin-left: 64px;
+}
+section.BULLETS h1 {
+  text-align: center;
+}
+section.COMMANDLINE code {
+  background: black;
+  color: #00ff00;
+}
+
+section.COMMANDLINE .cli-prompt {
+  font-weight: bold;
+  color: white;
+}
+
+section.COMMANDLINE .cli-command {
+  color: #00ffff;
+}
+
+section.CODE code {
+  /*
+  border-radius: 30px;
+  */
+  border-bottom-right-radius: 0.5em;
+  border-bottom-left-radius: 0.5em;
+  box-shadow: 0 0.3em 0.2em -0.2em #ddd7c4;
+}
+h1, h2, h3, h4 {
+  margin: 0;
+  font-family: Helvetica, Arial;
+}
+h2 {
+  font-size: 90%;
+}
+h3 {
+  font-size: 80%;
+}
+p, li {
+  font-family: Helvetica, Arial;
+}
+
+li {
+  list-style: disc;
+  list-style-position: outside;
+  margin-left: 1em;
+  margin-right: 1em;
+  line-height: 2em;
+}

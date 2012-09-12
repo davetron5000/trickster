@@ -1,49 +1,194 @@
 <!DOCTYPE html>
 <html>
-
   <head>
-    <meta charset='utf-8' />
-    <meta http-equiv="X-UA-Compatible" content="chrome=1" />
-    <meta name="description" content="Trickster : Developer-Friendly In-Browser Presentation Software" />
-
-    <link rel="stylesheet" type="text/css" media="screen" href="stylesheets/stylesheet.css">
-
-    <title>Trickster</title>
+    <title>Trickster Demo</title>
+    <script src="js/lib/jquery-1.8.0.min.js"></script>
+    <script src="js/lib/highlight-fc32801.min.js"></script>
+    <script src="js/lib/jquerytypewriter.js"></script>
+    <script src="js/lib/underscore-1.3.3.min.js"></script>
+    <script src="js/utils.js"></script>
+    <script src="js/sizer.js"></script>
+    <script src="js/bullets.js"></script>
+    <script src="js/trickster.js"></script>
+    <script src="js/custom.js"></script>
+    <link rel="stylesheet" href="css/normalize.css">
+    <link rel="stylesheet" href="css/highlight-solarized_light.min.css">
+    <link rel="stylesheet" href="css/styles.css">
+    <script>
+      $(window).load(function() {
+        Trickster = TricksterLoader(TricksterDefaultConfig,{});
+        Trickster.load();
+      });
+    </script>
   </head>
+  <body><div id="contents">
+    <section class='TITLE'>
+<h1>Trickster</h1>
+<h2>The developer's presentation software</h2>
+<h3>(Use cursor keys to navigate)</h3>
+</section>
+<section class='SECTION'>
+<h1>Trickster sizes your content to the screen</h1>
+</section>
+<section class='NORMAL'>
+<h1>Rewarding you for brevity</h1>
+</section>
+<section class='NORMAL'>
+<h1>And punishing you, and your audience, for slides that have entirely too much text on them, which we all know everyone hates and you should just stop doing right now.  Please!</h1>
+</section>
+<section class='SECTION'>
+<h1>Write your presentation in text</h1>
+</section>
+<section class='CODE'>
+<pre><code data-strikeouts='' data-callout-lines=''>  # slides
+  !TITLE
+  The title of a slide
 
-  <body>
+  !SECTION
+  A section
 
-    <!-- HEADER -->
-    <div id="header_wrap" class="outer">
-        <header class="inner">
-          <a id="forkme_banner" href="https://github.com/davetron5000/trickster">View on GitHub</a>
+  !BULLETS
+  A Bullet List
+  * has many entries
+  * and is totally useful</code></pre>
+</section>
+<section class='BULLETS'>
+<h1>Bullet Lists</h1>
+<ul>
+<li>Are revealed one at a time</li>
+<li>and are created with a <code>!BULLETS</code> tag</li>
+<li>Followed by one or more bullet points</li>
+</ul>
+</section>
+<section class='BULLETS'>
+<h1>Code Slides</h1>
+<ul>
+<li>Are syntax highlighted</li>
+<li>Are created with a <code>!CODE</code> tag</li>
+<li>And can contain your code inline</li>
+<li>Or reference a file via <code>file:///path/to/file</code></li>
+</ul>
+</section>
+<section class='CODE'>
+<pre><code class='ruby' data-strikeouts='' data-callout-lines=''>class YourCode
 
-          <h1 id="project_title">Trickster</h1>
-          <h2 id="project_tagline">Developer-Friendly In-Browser Presentation Software</h2>
+  def initialize(will)
+    @be_highlighted
+  end
 
-            <section id="downloads">
-              <a class="zip_download_link" href="https://github.com/davetron5000/trickster/zipball/master">Download this project as a .zip file</a>
-              <a class="tar_download_link" href="https://github.com/davetron5000/trickster/tarball/master">Download this project as a tar.gz file</a>
-            </section>
-        </header>
-    </div>
+end</code></pre>
+</section>
+<section class='BULLETS'>
+<h1>Callouts</h1>
+<ul>
+<li>You can callout certain lines</li>
+<li>Use the <code>callout=3,4,5</code> option</li>
+<li>You can strikethrough lines by using a dash</li>
+<li>Like this: <code>callout=3,-4,5</code></li>
+</ul>
+</section>
+<section class='CODE'>
+<pre><code class='ruby' data-strikeouts='4' data-callout-lines='3,4,5'>class YourCode
 
-    <!-- MAIN CONTENT -->
-    <div id="main_content_wrap" class="outer">
-      <section id="main_content" class="inner">
-        <p>TBD</p>
-      </section>
-    </div>
+  def initialize(will)
+    @be_highlighted
+  end
 
-    <!-- FOOTER  -->
-    <div id="footer_wrap" class="outer">
-      <footer class="inner">
-        <p class="copyright">Trickster maintained by <a href="https://github.com/davetron5000">davetron5000</a></p>
-        <p>Published with <a href="http://pages.github.com">GitHub Pages</a></p>
-      </footer>
-    </div>
+end</code></pre>
+</section>
+<section class='BULLETS'>
+<h1>Many languages</h1>
+<ul>
+<li>Just use the <code>language=LANG</code> option</li>
+<li>And you get all of <a href="http://softwaremaniacs.org/soft/highlight/en/">highlight.js</a>'s languages</li>
+</ul>
+</section>
+<section class='CODE'>
+<pre><code class='scala' data-strikeouts='' data-callout-lines=''>object Highlight {
+  def languageSupported(lang:String):Boolean = {
+    return HighlighJS.supports(lang)
+  }
+}</code></pre>
+</section>
+<section class='BULLETS'>
+<h1>Command Lines</h1>
+<ul>
+<li>You can show command-line invocation</li>
+<li>Use the <code>!COMMANDLINE</code> tag</li>
+<li>And a line with a prompt</li>
+<li>Followed by the command's output</li>
+</ul>
+</section>
+<section class='COMMANDLINE'>
+<pre><code class='no-highlight'><span class='cli-prompt'>&gt;</span> <span class='cli-element cli-command cli-line'> gem install trickster</span>
+<span class='cli-element cli-result'><span class='cli-line'> Fetching: gli-2.0.0.gem (100%)</span>
+<span class='cli-line'>Successfully installed gli-2.0.0</span>
+<span class='cli-line'>Successfully installed trickster-0.0.4</span>
+<span class='cli-line'>2 gems installed</span>
+<span class='cli-line'>Installing ri documentation for gli-2.0.0...</span>
+<span class='cli-line'>Installing ri documentation for trickster-0.0.4...</span>
+<span class='cli-line'>Installing RDoc documentation for gli-2.0.0...</span>
+<span class='cli-line'>Installing RDoc documentation for trickster-0.0.4...</span></span>
+<span class='cli-prompt'>&gt;</span> <span class='cli-element cli-command cli-line'> trickster help</span>
+<span class='cli-element cli-result'><span class='cli-line'>NAME</span>
+<span class='cli-line'>    trickster - Bootstrap, generate, and manage your trickster presentation</span>
+<span class='cli-line'></span>
+<span class='cli-line'>SYNOPSIS</span>
+<span class='cli-line'>    trickster [global options] command [command options] [arguments...]</span>
+<span class='cli-line'></span>
+<span class='cli-line'>VERSION</span>
+<span class='cli-line'>    0.0.4</span>
+<span class='cli-line'></span>
+<span class='cli-line'>GLOBAL OPTIONS</span>
+<span class='cli-line'>    --help    - Show this message</span>
+<span class='cli-line'>    --version -</span>
+<span class='cli-line'></span>
+<span class='cli-line'>COMMANDS</span>
+<span class='cli-line'>    build  - Generate the presentation from your slides</span>
+<span class='cli-line'>    help   - Shows a list of commands or help for one command</span>
+<span class='cli-line'>    init   - Create a new trickster presentation</span>
+<span class='cli-line'>    update - Update an existing slideshow with the latest Trickster JS/CSS files</span></span>
+</code></pre>
+</section>
+<section class='BULLETS'>
+<h1>Other Slide types</h1>
+<ul>
+<li>Use any tag you want, e.g. TITLE, SECTION</li>
+<li>Customize it in CSS</li>
+</ul>
+</section>
+<section class='SECTION'>
+<h1>CSS?</h1>
+</section>
+<section class='NORMAL'>
+<h1>Yup, just edit <code>styles.css</code> to tweak things how you want</h1>
+</section>
+<section class='NORMAL'>
+<h1>OR, name it <code>styles.scss</code> to get SASS Support!</h1>
+</section>
+<section class='NORMAL'>
+<h1>How do I get started?</h1>
+</section>
+<section class='COMMANDLINE'>
+<pre><code class='no-highlight'><span class='cli-prompt'>&gt;</span> <span class='cli-element cli-command cli-line'> gem install trickster</span>
+<span class='cli-prompt'>&gt;</span> <span class='cli-element cli-command cli-line'> trickster init my-new-presentation</span>
+<span class='cli-prompt'>&gt;</span> <span class='cli-element cli-command cli-line'> cd my-new-presentation</span>
+<span class='cli-prompt'>&gt;</span> <span class='cli-element cli-command cli-line'> vim slides # or whatever you want to use</span>
+<span class='cli-prompt'>&gt;</span> <span class='cli-element cli-command cli-line'> trickster build</span>
+<span class='cli-element cli-result'><span class='cli-line'>Now open up index.html and play your presentation</span></span>
+</code></pre>
+</section>
+<section class='BULLETS'>
+<h1>The Bad News</h1>
+<ul>
+<li>Hard-coded to Solarized for Syntax Highlighting</li>
+<li>Need a custom (but included) highlight.js</li>
+<li>You're on your own for themes</li>
+</ul>
+</section>
+<section class='SECTION'>
+<h1><a href="http://www.github.com/davetron5000/trickster">Please help!</a></h1>
+</section>
 
-    
-
-  </body>
+  </div></body>
 </html>
