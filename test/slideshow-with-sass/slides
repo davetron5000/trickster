@@ -1,0 +1,47 @@
+Title of your slideshow
+!TITLE
+Title of your slideshow
+Subtitle
+Sub-sub title
+
+!SECTION: background=dddddd
+A section
+
+!BULLETS
+A bullet list
+* can use any
+- reasonable
++ bullet
+
+!CODE: callout=3,4,5
+class YourCode
+
+  def initialize(will)
+    @be_highlighted
+  end
+
+end
+
+!IMAGE
+rudy.png
+
+!COMMANDLINE
+> ls -ltr
+-rw-r--r--  1 David  staff   1697 Aug 28 10:03 notes.txt.md
+-rw-r--r--  1 David  staff     97 Aug 28 10:03 trickster.rdoc
+-rw-r--r--  1 David  staff   1339 Aug 28 10:03 Rakefile
+-rw-r--r--  1 David  staff     25 Aug 28 10:03 Gemfile
+drwxr-xr-x  7 David  staff    238 Sep 10 16:53 js
+drwxr-xr-x  6 David  staff    204 Sep 10 16:53 features
+drwxr-xr-x  3 David  staff    102 Sep 10 16:53 erb
+drwxr-xr-x  5 David  staff    170 Sep 10 16:53 css
+-rw-r--r--  1 David  staff   1254 Sep 10 16:53 trickster.gemspec
+drwxr-xr-x  3 David  staff    102 Sep 10 16:53 bin
+-rw-r--r--  1 David  staff    150 Sep 10 16:53 TODO
+-rw-r--r--  1 David  staff   1563 Sep 10 16:53 Gemfile.lock
+drwxr-xr-x  4 David  staff    136 Sep 10 16:58 lib
+-rw-r--r--  1 David  staff   3991 Sep 10 17:01 README.rdoc
+drwxr-xr-x  3 David  staff    102 Sep 10 17:07 tmp
+-rw-r--r--  1 David  staff  87290 Sep 10 17:07 results.html
+drwxr-xr-x  9 David  staff    306 Sep 10 17:19 test
+> rm *

@@ -9,3 +9,4 @@ Feature: I can update my slideshow after I upgrade trickster
     And I successfully run `trickster update`
     Then the JS files and CSS files in "test_slideshow" should be up-to-date
     But "css/styles.css" in "test_slideshow" should not have been touched
+    And "js/custom.js" in "test_slideshow" should not have been touched

@@ -9,11 +9,20 @@ Given /^there is no directory named "(.*?)"$/ do |dir|
   FileUtils.rm_rf(dir)
 end
 
-Given /^a slideshow in "(.*?)"$/ do |dir|
-  FileUtils.rm_rf("tmp/aruba/#{dir}")
+def setup_slideshow_dir(src_dir,dest_dir)
+  FileUtils.rm_rf("tmp/aruba/#{dest_dir}")
   FileUtils.mkdir_p("tmp/aruba") unless File.exists?("tmp/aruba")
-  FileUtils.cp_r("test/slideshow","tmp/aruba/#{dir}")
+  FileUtils.cp_r("test/#{src_dir}","tmp/aruba/#{dest_dir}")
 end
+Given /^a slideshow in "(.*?)"$/ do |dir|
+  setup_slideshow_dir('slideshow',dir)
+end
+
+Given /^a slideshow in "(.*?)" that uses sass$/ do |dir|
+  setup_slideshow_dir('slideshow-with-sass',dir)
+end
+
+
 
 Then /^the file "(.*?)" should contain:$/ do |file, partial_content|
   check_file_content(file, partial_content, true)

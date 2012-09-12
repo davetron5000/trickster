@@ -85,34 +85,48 @@ command :update do |c|
     base = File.expand_path(File.join(File.dirname(__FILE__),'..'))
 
     copier = Trickster::FileCopier.new(base,dir)
-    copier.copy_files('js','js')
+    copier.copy_files('js','js', :except => "custom.js")
     copier.copy_files('js/lib','js')
     copier.copy_files('css','css', :except => "styles.css")
   end
 end
 
 desc 'Generate the presentation from your slides'
+arg_name '[slides_file]'
+long_desc <<EOS
+Given your slides_file (defaults to 'slides' in current directory), generates an HTML
+file (based on --output-file) that, when loaded, can be used to play your presentation.
+
+Any .scss files found in the css/ directory will be run through SASS to be converted.
+
+Note that currently, the CSS and JS files included are fixed, so keep all your customizations
+to styles.css/styles.scss and custom.js (these files will not be overwritten when
+you do a trickster update).
+EOS
 command :build do |c|
   c.desc          'Name of the generated HTML file'
   c.arg_name      'file'
   c.default_value 'index.html'
   c.flag          [:o,'output-file']
 
-  c.desc          'File containing your slides'
-  c.arg_name      "file"
-  c.default_value "slides"
-  c.flag          [:f,'slides-file']
-
-
   c.action do |global_options,options,args|
-    lines  = File.open(options[:'slides-file']).readlines.map(&:chomp)
-    parser = Trickster::SlideParser.new(lines,Trickster::SlideRenderer.new)
-    body   = parser.body
-    title  = parser.title
+    file    = File.open(args.shift || 'slides')
+    css_dir = File.join(File.dirname(file),'css')
+    lines   = file.readlines.map(&:chomp)
+    parser  = Trickster::SlideParser.new(lines,Trickster::SlideRenderer.new)
+    body    = parser.body
+    title   = parser.title
 
     erb = ERB.new(File.new(File.expand_path(File.join(File.dirname(__FILE__),'..','erb','index.html.erb'))).readlines.join(""))
     File.open(options[:'output-file'],"w") do |file|
       file.puts erb.result(binding)
+    end
+    Dir["#{css_dir}/*.scss"].each do |sass_file|
+      css_file = sass_file.gsub(/\.scss$/,'.css')
+      command = "sass #{sass_file} #{css_file}"
+      unless system(command)
+        STDERR.puts "Problem running '#{command}'"
+      end
     end
   end
 end
