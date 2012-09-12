@@ -20,6 +20,7 @@ js/lib/underscore-1.3.3.min.js
 js/sizer.js
 js/trickster.js
 js/utils.js
+js/custom.js
 erb/index.html.erb
 css/highlight-solarized_light.min.css
 css/normalize.css
