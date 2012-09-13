@@ -40,7 +40,7 @@
 <h1>Write your presentation in text</h1>
 </section>
 <section class='CODE'>
-<pre><code data-strikeouts='' data-callout-lines=''>  # slides
+<pre><code class='no-highlight' data-strikeouts='' data-callout-lines=''>  # slides
   !TITLE
   The title of a slide
 
@@ -55,19 +55,35 @@
 <section class='BULLETS'>
 <h1>Bullet Lists</h1>
 <ul>
-<li>Are revealed one at a time</li>
-<li>and are created with a <code>!BULLETS</code> tag</li>
-<li>Followed by one or more bullet points</li>
+<li>Have a title</li>
+<li>And have bullets</li>
+<li>Which are revealed one at a time</li>
 </ul>
+</section>
+<section class='CODE'>
+<pre><code class='no-highlight' data-strikeouts='' data-callout-lines=''> !BULLETS
+  Bullet Lists
+  * Have a title
+  * And have bullets
+  * Which are revealed one at a time</code></pre>
 </section>
 <section class='BULLETS'>
 <h1>Code Slides</h1>
 <ul>
 <li>Are syntax highlighted</li>
-<li>Are created with a <code>!CODE</code> tag</li>
-<li>And can contain your code inline</li>
+<li>Can contain your code inline</li>
 <li>Or reference a file via <code>file:///path/to/file</code></li>
 </ul>
+</section>
+<section class='CODE'>
+<pre><code class='no-highlight' data-strikeouts='' data-callout-lines=''> !CODE: language=ruby
+ class YourCode
+
+   def initialize(will)
+     @be_highlighted
+   end
+
+ end</code></pre>
 </section>
 <section class='CODE'>
 <pre><code class='ruby' data-strikeouts='' data-callout-lines=''>class YourCode
@@ -82,10 +98,18 @@ end</code></pre>
 <h1>Callouts</h1>
 <ul>
 <li>You can callout certain lines</li>
-<li>Use the <code>callout=3,4,5</code> option</li>
-<li>You can strikethrough lines by using a dash</li>
-<li>Like this: <code>callout=3,-4,5</code></li>
+<li>You can also strik-through certain lines</li>
 </ul>
+</section>
+<section class='CODE'>
+<pre><code class='no-highlight' data-strikeouts='' data-callout-lines=''> !CODE: language=ruby callout=3,-4,5
+ class YourCode
+ 
+   def initialize(will)
+     @be_highlighted
+   end
+ 
+ end</code></pre>
 </section>
 <section class='CODE'>
 <pre><code class='ruby' data-strikeouts='4' data-callout-lines='3,4,5'>class YourCode
@@ -104,6 +128,14 @@ end</code></pre>
 </ul>
 </section>
 <section class='CODE'>
+<pre><code class='no-highlight' data-strikeouts='' data-callout-lines=''> !CODE: language=scala
+ object Highlight {
+   def languageSupported(lang:String):Boolean = {
+     return HighlighJS.supports(lang)
+   }
+ }</code></pre>
+</section>
+<section class='CODE'>
 <pre><code class='scala' data-strikeouts='' data-callout-lines=''>object Highlight {
   def languageSupported(lang:String):Boolean = {
     return HighlighJS.supports(lang)
@@ -118,6 +150,37 @@ end</code></pre>
 <li>And a line with a prompt</li>
 <li>Followed by the command's output</li>
 </ul>
+</section>
+<section class='CODE'>
+<pre><code class='no-highlight' data-strikeouts='' data-callout-lines=''>  !COMMANDLINE
+  > gem install trickster
+   Fetching: gli-2.0.0.gem (100%)
+  Successfully installed gli-2.0.0
+  Successfully installed trickster-0.0.4
+  2 gems installed
+  Installing ri documentation for gli-2.0.0...
+  Installing ri documentation for trickster-0.0.4...
+  Installing RDoc documentation for gli-2.0.0...
+  Installing RDoc documentation for trickster-0.0.4...
+  > trickster help
+  NAME
+      trickster - Bootstrap, generate, and manage your trickster presentation
+
+  SYNOPSIS
+      trickster [global options] command [command options] [arguments...]
+
+  VERSION
+      0.0.4
+
+  GLOBAL OPTIONS
+      --help    - Show this message
+      --version -
+
+  COMMANDS
+      build  - Generate the presentation from your slides
+      help   - Shows a list of commands or help for one command
+      init   - Create a new trickster presentation
+      update - Update an existing slideshow with the latest Trickster JS/CSS files</code></pre>
 </section>
 <section class='COMMANDLINE'>
 <pre><code class='no-highlight'><span class='cli-prompt'>&gt;</span> <span class='cli-element cli-command cli-line'> gem install trickster</span>

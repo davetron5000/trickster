@@ -16,7 +16,7 @@ And punishing you, and your audience, for slides that have entirely too much tex
 !SECTION
 Write your presentation in text
 
-!CODE
+!CODE: language=no-highlight
   # slides
   !TITLE
   The title of a slide
@@ -31,16 +31,32 @@ Write your presentation in text
 
 !BULLETS
 Bullet Lists
-* Are revealed one at a time
-* and are created with a <code>!BULLETS</code> tag
-* Followed by one or more bullet points
+* Have a title
+* And have bullets
+* Which are revealed one at a time
+
+!CODE: language=no-highlight
+ !BULLETS
+  Bullet Lists
+  * Have a title
+  * And have bullets
+  * Which are revealed one at a time
 
 !BULLETS
 Code Slides
 * Are syntax highlighted
-* Are created with a <code>!CODE</code> tag
-* And can contain your code inline
+* Can contain your code inline
 * Or reference a file via <code>file:///path/to/file</code>
+
+!CODE: language=no-highlight
+ !CODE: language=ruby
+ class YourCode
+
+   def initialize(will)
+     @be_highlighted
+   end
+
+ end
 
 !CODE: language=ruby
 class YourCode
@@ -54,9 +70,17 @@ end
 !BULLETS
 Callouts
 * You can callout certain lines
-* Use the <code>callout=3,4,5</code> option
-* You can strikethrough lines by using a dash
-* Like this: <code>callout=3,-4,5</code>
+* You can also strike-through certain lines
+
+!CODE: language=no-highlight
+ !CODE: language=ruby callout=3,-4,5
+ class YourCode
+ 
+   def initialize(will)
+     @be_highlighted
+   end
+ 
+ end
 
 !CODE: language=ruby callout=3,-4,5
 class YourCode
@@ -72,6 +96,14 @@ Many languages
 * Just use the <code>language=LANG</code> option
 * And you get all of <a href="http://softwaremaniacs.org/soft/highlight/en/">highlight.js</a>'s languages
 
+!CODE: language=no-highlight
+ !CODE: language=scala
+ object Highlight {
+   def languageSupported(lang:String):Boolean = {
+     return HighlighJS.supports(lang)
+   }
+ }
+
 !CODE: language=scala
 object Highlight {
   def languageSupported(lang:String):Boolean = {
@@ -85,6 +117,37 @@ Command Lines
 * Use the <code>!COMMANDLINE</code> tag
 * And a line with a prompt
 * Followed by the command's output
+
+!CODE: language=no-highlight
+  !COMMANDLINE
+  > gem install trickster
+   Fetching: gli-2.0.0.gem (100%)
+  Successfully installed gli-2.0.0
+  Successfully installed trickster-0.0.4
+  2 gems installed
+  Installing ri documentation for gli-2.0.0...
+  Installing ri documentation for trickster-0.0.4...
+  Installing RDoc documentation for gli-2.0.0...
+  Installing RDoc documentation for trickster-0.0.4...
+  > trickster help
+  NAME
+      trickster - Bootstrap, generate, and manage your trickster presentation
+
+  SYNOPSIS
+      trickster [global options] command [command options] [arguments...]
+
+  VERSION
+      0.0.4
+
+  GLOBAL OPTIONS
+      --help    - Show this message
+      --version -
+
+  COMMANDS
+      build  - Generate the presentation from your slides
+      help   - Shows a list of commands or help for one command
+      init   - Create a new trickster presentation
+      update - Update an existing slideshow with the latest Trickster JS/CSS files
 
 !COMMANDLINE
 > gem install trickster
