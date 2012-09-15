@@ -201,10 +201,10 @@ class SlideRendererTest < Clean::Test::TestCase
       assert_content(
         "CODE",
         [
-          "<pre><code data-strikeouts='' data-callout-lines=''>#{@code[0]}",
-          @code[1],
-          @code[2],
-          "#{@code[3]}</code></pre>",
+          "<pre><code data-strikeouts='' data-callout-lines=''>#{wrap_line(@code[0],1)}",
+          wrap_line(@code[1],2),
+          wrap_line(@code[2],3),
+          "#{wrap_line(@code[3],4)}</code></pre>",
         ],
         @renderer.content)
     }
@@ -226,10 +226,10 @@ class SlideRendererTest < Clean::Test::TestCase
       assert_content(
         "CODE",
         [
-          "<pre><code class='#{@language}' data-strikeouts='' data-callout-lines=''>#{@code[0]}",
-          @code[1],
-          @code[2],
-          "#{@code[3]}</code></pre>",
+          "<pre><code class='#{@language}' data-strikeouts='' data-callout-lines=''>#{wrap_line(@code[0],1)}",
+          wrap_line(@code[1],2),
+          wrap_line(@code[2],3),
+          "#{wrap_line(@code[3],4)}</code></pre>",
         ],
         @renderer.content)
     }
@@ -251,10 +251,10 @@ class SlideRendererTest < Clean::Test::TestCase
       assert_content(
         "CODE",
         [
-          "<pre><code data-strikeouts='2' data-callout-lines='1,2,3'>#{@code[0]}",
-          @code[1],
-          @code[2],
-          "#{@code[3]}</code></pre>",
+          "<pre><code data-strikeouts='2' data-callout-lines='1,2,3'><div class='lines-callout'>#{wrap_line(@code[0],1,true)}",
+          wrap_line(@code[1],2,true),
+          wrap_line(@code[2],3,true),
+          "</div>#{wrap_line(@code[3],4)}</code></pre>",
         ],
         @renderer.content)
     }
@@ -282,10 +282,10 @@ class SlideRendererTest < Clean::Test::TestCase
       assert_content(
         "CODE",
         [
-          "<pre><code data-strikeouts='' data-callout-lines=''>#{@code[0]}",
-          @code[1],
-          @code[2],
-          "#{@code[3]}</code></pre>",
+          "<pre><code data-strikeouts='' data-callout-lines=''>#{wrap_line(@code[0],1)}",
+          wrap_line(@code[1],2),
+          wrap_line(@code[2],3),
+          "#{wrap_line(@code[3],4)}</code></pre>",
         ],
         @renderer.content)
     }
@@ -308,5 +308,9 @@ private
     transition = transition_attribute.nil? ? '' : " data-transition='#{transition_attribute}'"
 
     return background + transition
+  end
+
+  def wrap_line(line,index,callout=false)
+    "<span class='line line-#{index} #{callout ? 'line-callout' : ''}' >#{line}</span>"
   end
 end
