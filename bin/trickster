@@ -9,9 +9,20 @@ include GLI::App
 
 BASE_DIR = File.expand_path(File.join(File.dirname(__FILE__),'..'))
 
+THEMES = Dir[File.join(BASE_DIR,'css','themes') + "/*.css",
+             File.join(BASE_DIR,'css','themes') + "/*.scss"].map { |file| 
+  File.basename(file).gsub(/\.css$/,'').gsub(/\.scss/,'') 
+}.sort
+
 program_desc 'Bootstrap, generate, and manage your trickster presentation'
 
 version Trickster::VERSION
+
+def add_theme_flag(command)
+  command.desc "Specify the syntax highlighting theme to use.  One of #{THEMES.join(', ')}.  Use 'custom' to get an scss file you can easily customize."
+  command.default_value 'default'
+  command.flag [:t,:theme], :must_match => THEMES
+end
 
 desc 'Create a new trickster presentation'
 long_desc <<EOS
@@ -28,14 +39,8 @@ to get the latest JavaScript and CSS files.
 EOS
 arg_name 'dir_name'
 command :init do |c|
-  themes = Dir[File.join(BASE_DIR,'css','themes') + "/*.css",
-               File.join(BASE_DIR,'css','themes') + "/*.scss"].map { |file| 
-    File.basename(file).gsub(/\.css$/,'').gsub(/\.scss/,'') 
-  }.sort
 
-  c.default_value 'default'
-  c.desc "Specify the syntax highlighting theme to use.  One of #{themes.join(', ')}.  Use 'custom' to get an scss file you can easily customize."
-  c.flag [:t,:theme], :must_match => themes
+  add_theme_flag(c)
 
   c.action do |global_options,options,args|
     dir = args.shift
@@ -80,29 +85,52 @@ EOF
   end
 end
 
-desc 'Update an existing slideshow with the latest Trickster JS/CSS files or to change themes'
-long_desc <<EOS
-Run this after you've upgraded trickster and want to get the latest features.  Since your 
-slideshow is entirely self-contained, when you upgrade trickster, your static JavaScript and
-CSS files will be out of date.
-
-Note that `styles.css`, which was provided by trickster as a basis for styling, will not
-be touched, and your customizations will remain. All other files that trickster gave you
-when you ran `trickster init` will be overwritten.
-
-This can also be used to switch themes for syntax highlighting
-EOS
+desc 'Update your slideshow with files provided by trickster'
 arg_name '[dir_name]'
 command :update do |c|
-  c.action do |global_options,options,args|
-    dir = args.shift
-    dir = '.' if dir.nil?
 
-    copier = Trickster::FileCopier.new(BASE_DIR,dir)
-    copier.copy_files('js','js', :except => "custom.js")
-    copier.copy_files('js/lib','js')
-    copier.copy_files('css','css', :except => "styles.css")
+  c.desc "Update the trickster JS/CSS files when you've updated the trickster gem"
+  c.long_desc <<-EOS
+  Run this after you've upgraded trickster and want to get the latest features.  Since your 
+  slideshow is entirely self-contained, when you upgrade trickster, your static JavaScript and
+  CSS files will be out of date.
+
+  Note that `styles.css`, which was provided by trickster as a basis for styling, will not
+  be touched, and your customizations will remain. All other files that trickster gave you
+  when you ran `trickster init` will be overwritten.
+  EOS
+  c.arg_name 'slide_dir'
+  c.command :files do |files_command|
+    files_command.action do |global_options,options,args|
+      dir = args.shift
+      dir = '.' if dir.nil?
+
+      copier = Trickster::FileCopier.new(BASE_DIR,dir)
+      copier.copy_files('js','js', :except => "custom.js")
+      copier.copy_files('js/lib','js')
+      copier.copy_files('css','css', :except => "styles.css")
+    end
   end
+
+  c.desc 'Update the syntax-highlighting theme for your presentation'
+  c.long_desc <<-EOS
+  A normal 'trickster update' will leave your theme.css alone, since you can customize it.  This will overwrite
+  your existing theme.css with the theme from trickster that you specify.  You should check your presentation
+  into source control to avoid the destructive nature of this command.
+  EOS
+  c.arg_name 'slide_dir'
+  c.command :theme do |theme_command|
+    add_theme_flag(theme_command)
+
+    theme_command.action do |global_options,options,args|
+      dir = args.shift
+      dir = '.' if dir.nil?
+      theme_copier = Trickster::ThemeCopier.new(BASE_DIR,dir)
+      theme_copier.copy_theme(options[:theme])
+    end
+  end
+
+  c.default_command :files
 end
 
 desc 'Generate the presentation from your slides'
