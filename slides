@@ -72,7 +72,7 @@ Callouts
 * You can callout certain lines
 * You can also strike-through certain lines
 
-!CODE: language=no-highlight
+!CODE: language=no-highlight callout=1
  !CODE: language=ruby callout=3,-4,5
  class YourCode
  
@@ -137,17 +137,17 @@ Command Lines
       trickster [global options] command [command options] [arguments...]
 
   VERSION
-      0.0.4
+      0.0.5
 
   GLOBAL OPTIONS
       --help    - Show this message
-      --version -
+      --version - 
 
   COMMANDS
       build  - Generate the presentation from your slides
       help   - Shows a list of commands or help for one command
       init   - Create a new trickster presentation
-      update - Update an existing slideshow with the latest Trickster JS/CSS files
+      update - Update your slideshow with files provided by trickster
 
 !COMMANDLINE
 > gem install trickster
@@ -167,17 +167,17 @@ SYNOPSIS
     trickster [global options] command [command options] [arguments...]
 
 VERSION
-    0.0.4
+    0.0.5
 
 GLOBAL OPTIONS
     --help    - Show this message
-    --version -
+    --version - 
 
 COMMANDS
     build  - Generate the presentation from your slides
     help   - Shows a list of commands or help for one command
     init   - Create a new trickster presentation
-    update - Update an existing slideshow with the latest Trickster JS/CSS files
+    update - Update your slideshow with files provided by trickster
 
 !BULLETS
 Other Slide types
@@ -204,11 +204,5 @@ How do I get started?
 > trickster build
 Now open up index.html and play your presentation
 
-!BULLETS
-The Bad News
-* Hard-coded to Solarized for Syntax Highlighting
-* Need a custom (but included) highlight.js
-* You're on your own for themes
-
 !SECTION
-<a href="http://www.github.com/davetron5000/trickster">Please help!</a>
+<a href="http://www.github.com/davetron5000/trickster">See the code on Github!</a>

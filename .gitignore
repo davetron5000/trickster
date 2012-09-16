@@ -1,0 +1,6 @@
+.jhw-cache/
+Gemfile.lock
+pkg/
+results.html
+tmp/
+
