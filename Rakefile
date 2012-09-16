@@ -1,9 +1,10 @@
 require 'rake/clean'
-require 'rubygems'
-require 'rubygems/package_task'
+require 'bundler'
 require 'rdoc/task'
 require 'cucumber'
 require 'cucumber/rake/task'
+
+Bundler::GemHelper.install_tasks
 
 CLEAN << "test/slideshow/index.html"
 
@@ -13,10 +14,6 @@ Rake::RDocTask.new do |rd|
   rd.title = 'Your application title'
 end
 
-spec = eval(File.read('trickster.gemspec'))
-
-Gem::PackageTask.new(spec) do |pkg|
-end
 CUKE_RESULTS = 'results.html'
 CLEAN << CUKE_RESULTS
 CLOBBER << 'tmp/aruba'
