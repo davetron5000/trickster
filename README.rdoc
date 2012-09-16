@@ -9,7 +9,7 @@ JavaScript, which will dynamically resize each slide to the biggest it can be ba
 
 == Presentation Format
 
-Your presentation is stored in text file.  Each slide has the following format:
+Your presentation is stored in a text file.  Each slide has the following format:
 
     !<slide_type>: options
     <content>
@@ -113,7 +113,7 @@ The second, and more useful, point of customization is +styles.css+ or +styles.s
 
 * Prefer 'em' over explicit sizes, as this will aloww your sizing choices to work at any size (remember that Trickster tries to fit your content to the screen)
 * The <tt>BODY</tt> element will be given the class of the currently-displayed slide, so if you want to, for example, change the background color of a slide based on its type, apply styles to <tt>body.SLIDE_TYPE</tt> and not <tt>section.SLIDE_TYPE</tt>
-* The syntax highlighting is woefully tied to Solarized Light.  Since we are using a patched version of highlight.js that shows line numbers and calls out lines, I had to patch the syntax CSS file to show those highlights.  I've currently only done so for Solarized Light, and this style is hard-coded in the generated HTML file, anway.  Sorry.  Feel free to improve this for me and I'll commit the patch.
+* If you want to customzie the syntax highlighting, you can.  <tt>trickster update</tt> will leave it alone.  If you want to build a more invovled highlighting theme, use the "custom" theme when you create your presentation or migrate to it via <tt>trickster update theme -t custom</tt>
 
 == Delivering the Presentation
 
