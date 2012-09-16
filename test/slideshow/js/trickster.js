@@ -44,7 +44,7 @@ var TricksterLoader = function(config,functions) {
       if ($(this).attr("data-strikeouts")) {
         var strikes = $(this).attr("data-strikeouts").split(",");
         for(var index in strikes) {
-          var line = parseInt(strikes[index]) - 1;
+          var line = parseInt(strikes[index]);
           $(this).find(".line-" + line).css("text-decoration","line-through");
         }
       }

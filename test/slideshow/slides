@@ -13,7 +13,7 @@ A bullet list
 - reasonable
 + bullet
 
-!CODE: callout=3,4,5
+!CODE: callout=3,-4,5
 class YourCode
 
   def initialize(will)
