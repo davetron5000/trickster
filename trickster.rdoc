@@ -1,6 +1,6 @@
 == trickster - Bootstrap, generate, and manage your trickster presentation
 
-v0.0.4
+v0.0.5
 
 === Global Options
 === --help
@@ -54,16 +54,52 @@ You can examine the file `slides` to see some examples of how to format your
 presentation.  You can run `trickster build` in the directory to create the HTML
 file from your slides.
 
-Note that if you upgrade trickster, you should run `tricksterd update` in your slide directory
+Note that if you upgrade trickster, you should run `trickster update` in your slide directory
 to get the latest JavaScript and CSS files.
+===== Options
+===== -t arg
+
+Specify the syntax highlighting theme to use.  One of arta, ascetic, brown_paper, custom, dark, default, far, github, googlecode, idea, ir_black, magula, monokai, pojoaque, rainbow, school_book, solarized_dark, solarized_light, sunburst, tomorrow, tomorrow-night, tomorrow-night-blue, tomorrow-night-bright, tomorrow-night-eighties, vs, xcode, zenburn.  Use 'custom' to get an scss file you can easily customize.
+
+[Aliases] --theme
+[Default Value] default
+[Must Match] ["arta", "ascetic", "brown_paper", "custom", "dark", "default", "far", "github", "googlecode", "idea", "ir_black", "magula", "monokai", "pojoaque", "rainbow", "school_book", "solarized_dark", "solarized_light", "sunburst", "tomorrow", "tomorrow-night", "tomorrow-night-blue", "tomorrow-night-bright", "tomorrow-night-eighties", "vs", "xcode", "zenburn"]
+
+
 ==== update [dir_name]
-Update an existing slideshow with the latest Trickster JS/CSS files
+Update your slideshow with files provided by trickster
+
+
+
+===== Commands
+====== files slide_dir
+Update the trickster JS/CSS files when you've updated the trickster gem
 
 
 Run this after you've upgraded trickster and want to get the latest features.  Since your 
-slideshow is entirely self-contained, when you upgrade tricksterd, your static JavaScript and
-CSS files will be out of date.
+  slideshow is entirely self-contained, when you upgrade trickster, your static JavaScript and
+  CSS files will be out of date.
 
-Note that `styles.css`, which was provided by trickster as a basis for styling, will not
-be touched, and your customizations will remain. All other files that trickster gave you
-when you ran `trickster init` will be overwritten.
+  Note that `styles.css`, which was provided by trickster as a basis for styling, will not
+  be touched, and your customizations will remain. All other files that trickster gave you
+  when you ran `trickster init` will be overwritten.
+====== theme slide_dir
+Update the syntax-highlighting theme for your presentation
+
+
+A normal 'trickster update' will leave your theme.css alone, since you can customize it.  This will overwrite
+  your existing theme.css with the theme from trickster that you specify.  You should check your presentation
+  into source control to avoid the destructive nature of this command.
+======= Options
+======= -t slide_dir
+
+Specify the syntax highlighting theme to use.  One of arta, ascetic, brown_paper, custom, dark, default, far, github, googlecode, idea, ir_black, magula, monokai, pojoaque, rainbow, school_book, solarized_dark, solarized_light, sunburst, tomorrow, tomorrow-night, tomorrow-night-blue, tomorrow-night-bright, tomorrow-night-eighties, vs, xcode, zenburn.  Use 'custom' to get an scss file you can easily customize.
+
+[Aliases] --theme
+[Default Value] default
+[Must Match] ["arta", "ascetic", "brown_paper", "custom", "dark", "default", "far", "github", "googlecode", "idea", "ir_black", "magula", "monokai", "pojoaque", "rainbow", "school_book", "solarized_dark", "solarized_light", "sunburst", "tomorrow", "tomorrow-night", "tomorrow-night-blue", "tomorrow-night-bright", "tomorrow-night-eighties", "vs", "xcode", "zenburn"]
+A normal 'trickster update' will leave your theme.css alone, since you can customize it.  This will overwrite
+  your existing theme.css with the theme from trickster that you specify.  You should check your presentation
+  into source control to avoid the destructive nature of this command.
+
+[Default Command] files
