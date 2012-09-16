@@ -7,6 +7,8 @@ require 'fileutils'
 
 include GLI::App
 
+BASE_DIR = File.expand_path(File.join(File.dirname(__FILE__),'..'))
+
 program_desc 'Bootstrap, generate, and manage your trickster presentation'
 
 version Trickster::VERSION
@@ -21,11 +23,20 @@ You can examine the file `slides` to see some examples of how to format your
 presentation.  You can run `trickster build` in the directory to create the HTML
 file from your slides.
 
-Note that if you upgrade trickster, you should run `tricksterd update` in your slide directory
+Note that if you upgrade trickster, you should run `trickster update` in your slide directory
 to get the latest JavaScript and CSS files.
 EOS
 arg_name 'dir_name'
 command :init do |c|
+  themes = Dir[File.join(BASE_DIR,'css','themes') + "/*.css",
+               File.join(BASE_DIR,'css','themes') + "/*.scss"].map { |file| 
+    File.basename(file).gsub(/\.css$/,'').gsub(/\.scss/,'') 
+  }.sort
+
+  c.default_value 'default'
+  c.desc "Specify the syntax highlighting theme to use.  One of #{themes.join(', ')}.  Use 'custom' to get an scss file you can easily customize."
+  c.flag [:t,:theme], :must_match => themes
+
   c.action do |global_options,options,args|
     dir = args.shift
     FileUtils.mkdir(dir)
@@ -55,36 +66,39 @@ class YourCode
 
 end
 EOF
-      base = File.expand_path(File.join(File.dirname(__FILE__),'..'))
 
-      copier = Trickster::FileCopier.new(base,dir)
-      copier.copy_files('js','js')
-      copier.copy_files('js/lib','js')
-      copier.copy_files('css','css')
+      file_copier = Trickster::FileCopier.new(BASE_DIR,dir)
+      file_copier.copy_files('js','js')
+      file_copier.copy_files('js/lib','js')
+      file_copier.copy_files('css','css')
+
+      theme_copier = Trickster::ThemeCopier.new(BASE_DIR,dir)
+      theme_copier.copy_theme(options[:theme])
 
       puts "Your slideshow is ready, run trickster build to build it"
     end
   end
 end
 
-desc 'Update an existing slideshow with the latest Trickster JS/CSS files'
+desc 'Update an existing slideshow with the latest Trickster JS/CSS files or to change themes'
 long_desc <<EOS
 Run this after you've upgraded trickster and want to get the latest features.  Since your 
-slideshow is entirely self-contained, when you upgrade tricksterd, your static JavaScript and
+slideshow is entirely self-contained, when you upgrade trickster, your static JavaScript and
 CSS files will be out of date.
 
 Note that `styles.css`, which was provided by trickster as a basis for styling, will not
 be touched, and your customizations will remain. All other files that trickster gave you
 when you ran `trickster init` will be overwritten.
+
+This can also be used to switch themes for syntax highlighting
 EOS
 arg_name '[dir_name]'
 command :update do |c|
   c.action do |global_options,options,args|
     dir = args.shift
     dir = '.' if dir.nil?
-    base = File.expand_path(File.join(File.dirname(__FILE__),'..'))
 
-    copier = Trickster::FileCopier.new(base,dir)
+    copier = Trickster::FileCopier.new(BASE_DIR,dir)
     copier.copy_files('js','js', :except => "custom.js")
     copier.copy_files('js/lib','js')
     copier.copy_files('css','css', :except => "styles.css")

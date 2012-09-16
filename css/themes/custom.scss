@@ -1,0 +1,322 @@
+$bg-color           : #474949;
+$default-fg-color   : #D1D9E1;
+$selection-bg-color : #FF5E99;
+$selection-fg-color : #FF5E99;
+
+$comment-color          : #969896;
+$comment-style          : italic;
+$template_comment-color : $comment-color;
+$template_comment-style : $comment-style;
+$doctype-color          : $comment-color;
+$doctype-style          : $comment-style;
+$javadoc-color          : $comment-color;
+$javadoc-style          : $comment-style;
+$diff-header-color      : $comment-color;
+$diff-header-style      : $comment-style;
+$lisp-string-color      : $comment-color;
+$lisp-string-style      : $comment-style;
+
+$keyword-color           : #cc99cc;
+$css-tag-color           : $keyword-color;
+$addition-color          : $keyword-color;
+$javascript-title-color  : $keyword-color;
+$winutils-color          : $keyword-color;
+$clojure-attribute-color : $keyword-color;
+
+$number-color: #f99157;
+
+$regexp-color      : #8abeb7;
+$tex-formula-color : $regexp-color;
+$phpdoc-color      : $regexp-color;
+$tag-value-color   : $regexp-color;
+$string-color      : $regexp-color;
+$command-color     : $regexp-color;
+$hexcolor-color    : $regexp-color;
+
+$identifier-color     : #b5bd68;
+$title-color          : $identifier-color;
+$lisp-title-color     : $identifier-color;
+$built_in-color       : $identifier-color;
+$decorator-color      : $identifier-color;
+$chunk-color          : $identifier-color;
+$function-title-color : $identifier-color;
+$localvars-color      : $identifier-color;
+
+$class-keyword-color : #f2777a;
+
+$variable-color               : #ffcc66;
+$lisp-body-color              : $variable-color;
+$smalltalk-number-color       : $variable-color;
+$constant-color               : $variable-color;
+$class-title-color            : $variable-color;
+$parent-color                 : $variable-color;
+$haskell-label-color          : $variable-color;
+$id-color                     : $variable-color;
+$lisp-title-color             : $variable-color;
+$clojure-title-built_in-color : $variable-color;
+
+$attribute-color     : #81a2be;
+$clojure-title-color : $attribute-color;
+
+$symbol-color        : #f99157;
+$cdata-color         : $symbol-color;
+$subst-color         : $symbol-color;
+$important-color     : $symbol-color;
+$attr_selector-color : $symbol-color;
+$special-color       : $symbol-color;
+$diff-change-color   : $symbol-color;
+$symbol-string-color : $symbol-color;
+$shebang-color       : $symbol-color;
+$pi-color            : $symbol-color;
+$preprocessor-color  : $symbol-color;
+
+$deletion-color : #dc322f;
+
+$tex-formula-color: #eee8d5;
+
+$callout-bg-color: #eee8d5;
+$callout-arrow-color: #002b36;
+
+pre ::-moz-selection {
+  background: $selection-bg-color;
+  color: $selection-fg-color;
+  text-shadow: none;
+}
+
+pre ::selection {
+  background: $selection-bg-color;
+  color: $selection-fg-color;
+  text-shadow: none;
+}
+
+pre code {
+  display: block;
+  padding: 0.5em;
+  background: $bg-color;
+  color: $default-fg-color;
+}
+
+
+pre .body,
+pre .collection {
+   color: $default-fg-color;
+}
+
+pre .comment {
+  color: $comment-color;
+  font-style: $comment-style;
+}
+pre .template_comment {
+  color: $template_comment-color;
+  font-style: $template_comment-style;
+}
+pre .diff .header {
+  color: $diff-header-color;
+  font-style: $diff-header-style;
+}
+pre .doctype {
+  color: $doctype-color;
+  font-style: $doctype-style;
+}
+
+pre .lisp .string {
+  color: $lisp-string-color;
+  font-style: $lisp-string-style;
+}
+
+pre .javadoc {
+  color: $javadoc-color;
+  font-style: $javadoc-style;
+}
+
+pre .keyword {
+  color: $keyword-color;
+}
+pre .clojure .attribute {
+  color: $clojure-attribute-color;
+}
+pre .winutils {
+  color: $winutils-color;
+}
+pre .javascript .title {
+  color: $javascript-title-color;
+}
+pre .addition {
+  color: $addition-color;
+}
+pre .css .tag {
+  color: $css-tag-color;
+}
+
+pre .number {
+  color: $number-color;
+}
+
+pre .command {
+  color: $command-color
+}
+pre .string {
+  color: $string-color;
+}
+pre .tag .value {
+  color: $tag-value-color;
+}
+pre .phpdoc {
+  color: $phpdoc-color;
+}
+pre .tex .formula {
+  color: $tex-formula-color;
+}
+pre .regexp {
+  color: $regexp-color;
+}
+pre .hexcolor {
+  color: $hexcolor-color;
+}
+
+pre .title {
+  color: $title-color;
+}
+pre .localvars {
+  color: $localvars-color;
+}
+pre .function .title {
+  color: $function-title-color;
+}
+pre .chunk {
+  color: $chunk-color;
+}
+pre .decorator {
+  color: $decorator-color;
+}
+pre .built_in {
+  color: $built_in-color;
+}
+pre .lisp .title {
+  color: $lisp-title-color;
+}
+pre .identifier {
+  color: $identifer-color;
+}
+
+pre .class .keyword {
+  color: $class-keyword-color;
+}
+
+pre .variable {
+  color: $variable-color;
+}
+pre .lisp .body {
+  color: $lisp-body-color;
+}
+pre .smalltalk .number {
+  color: $smalltalk-number-color;
+}
+pre .constant {
+  color: $constant-color;
+}
+pre .class .title {
+  color: $class-title-color;
+}
+pre .parent {
+  color: $parent-color;
+}
+pre .haskell .label {
+  color: $haskell-label-color;
+}
+pre .id {
+  color: $id-color;
+}
+pre .lisp .title {
+  color: $lisp-title-color;
+}
+pre .clojure .title .built_in {
+  color: $clojure-title-built_in-color;
+}
+
+pre .tag .title,
+pre .rules .property,
+pre .django .tag .keyword,
+pre .clojure .title .built_in {
+  font-weight: bold;
+}
+
+pre .attribute {
+  color: $attribute-color;
+}
+pre .clojure .title {
+  color: $clojure-title-color;
+}
+
+pre .preprocessor {
+  color: $preprocessor-color;
+}
+pre .pi {
+  color: $pi-color;
+}
+pre .shebang {
+  color: $shebang-color;
+}
+pre .symbol {
+  color: $symbol-color;
+}
+pre .symbol .string {
+  color: $symbol-string-color;
+}
+pre .diff .change {
+  color: $diff-change-color;
+}
+pre .special {
+  color: $special-color;
+}
+pre .attr_selector {
+  color: $attr_selector-color;
+}
+pre .important {
+  color: $important-color;
+}
+pre .subst {
+  color: $subst-color;
+}
+pre .cdata {
+  color: $cdata-color;
+}
+
+pre .deletion {
+  color: $deletion-color;
+}
+
+pre .tex .formula {
+  background: $tex-formula-color;
+}
+pre {
+  counter-reset: lines;
+}
+pre .line {
+  counter-increment: lines;
+}
+pre .line::before {
+  content: counter(lines); text-align: right;
+  display: inline-block; width: 2em;
+  padding-right: 0.5em; margin-right: 0.5em;
+  color: $callout-bg-color;
+}
+
+pre .line-callout::before {
+  content: '\2192'; text-align: right;
+  display: inline-block; width: 2em;
+  padding-right: 0.5em; margin-right: 0.5em;
+  color: $callout-arrow-color;
+}
+
+.lines-callout {
+  border-radius: 0.25em;
+  padding-top: 0.15em;
+  padding-bottom: 0.15em;
+}
+
+.lines-callout {
+  padding-top: 0.1em;
+  padding-bottom: 0.1em;
+  background: $callout-bg-color;
+}

@@ -53,4 +53,71 @@ Rake::TestTask.new do |t|
   t.test_files = FileList['test/*_test.rb']
 end
 
+desc 'Add CSS markup to the theme files for callouts'
+task 'patch_css' do
+  Dir["css/themes-orig/*.css"].each do |original_css_file|
+    new_css_file = "css/themes/" + File.basename(original_css_file)
+    background = nil
+    opacity = nil
+    look_for_background = false
+    File.open(new_css_file,'w') do |new_file|
+      File.open(original_css_file).readlines.each do |line|
+        new_file.puts line
+
+        if look_for_background
+          if line =~ /background-color: (.*);/
+            background = $1;
+            look_for_background = false
+          elsif line =~ /background: (.*);/
+            background = $1;
+            look_for_background = false
+          elsif line =~ /opacity: (.*);/
+            opacity = $1;
+            look_for_background = false
+          end
+        end
+
+        if line =~ /^pre .tex .formula {/
+          look_for_background = true
+        end
+      end
+      string = <<EOS
+pre {
+  counter-reset: lines;
+}
+pre .line {
+  counter-increment: lines;
+}
+pre .line::before {
+  content: counter(lines); text-align: right;
+  display: inline-block; width: 2em;
+  padding-right: 0.5em; margin-right: 0.5em;
+  color: #eee8d5;
+}
+
+pre .line-callout::before {
+  content: '\\2192'; text-align: right;
+  display: inline-block; width: 2em;
+  padding-right: 0.5em; margin-right: 0.5em;
+  color: #002b36;
+}
+
+.lines-callout {
+  border-radius: 0.25em;
+  padding-top: 0.15em;
+  padding-bottom: 0.15em;
+}
+
+.lines-callout {
+  padding-top: 0.1em;
+  padding-bottom: 0.1em;
+  #{background.nil? ? opacity.nil? ? '/* Could not determine background for callouts */' : ("opacity: " + opacity + ";") : ("background: " + background + ";")}
+}
+EOS
+      new_file.puts string
+    end
+    puts "Migrated #{original_css_file}"
+  end
+end
+
 task :default => [:test,:jasmine,:features]

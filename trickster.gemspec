@@ -13,7 +13,6 @@ spec = Gem::Specification.new do |s|
 bin/trickster
 js/bullets.js
 js/lib/highlight-7.1.min.js
-js/lib/highlight-fc32801.min.js
 js/lib/jquery-1.8.0.min.js
 js/lib/jquerytypewriter.js
 js/lib/underscore-1.3.3.min.js

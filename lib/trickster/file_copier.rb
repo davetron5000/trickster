@@ -1,12 +1,5 @@
 module Trickster
-  class FileCopier
-    # install_root:: where the root of trickster's install is, to find files to copy
-    # destination_root:: root of where we are copying to
-    def initialize(install_root,destination_root)
-      @install_root     = install_root
-      @destination_root = destination_root
-    end
-
+  class FileCopier < Copier
     # Shallow copies all files from +from+ with the given extension
     #
     # from:: location, relative to @install_root where files are copied from

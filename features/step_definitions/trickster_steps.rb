@@ -65,7 +65,14 @@ Then /^the JS files and CSS files in "(.*?)" should be up\-to\-date$/ do |dir|
 end
 
 Then /^"(.*?)" in "(.*?)" should not have been touched$/ do |file,dir|
-  original = File.read(file)
+  original = File.read("test/slideshow/#{file}")
   in_slideshow = File.read("tmp/aruba/#{dir}/#{file}")
-  original.should_not == in_slideshow
+  original.should == in_slideshow
+end
+
+Then /^"(.*?)" in "(.*?)" should be identical to "(.*?)"$/ do |css_file, dir, original_css_file|
+  got = File.read("tmp/aruba/#{dir}/#{css_file}")
+  expect = File.read(File.join(File.dirname(__FILE__),'..','..','css','themes',original_css_file))
+
+  got.should == expect
 end

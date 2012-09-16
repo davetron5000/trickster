@@ -39,3 +39,19 @@ Feature: I can create a new slideshow
     And a directory named "slideshow/css" should exist
     And the directory "slideshow/css" should contain all the trickster CSS files and support stylesheets
     And the output should contain "Your slideshow is ready, run trickster build to build it"
+    And "css/theme.css" in "slideshow" should be identical to "default.css"
+
+  Scenario: Can init a new slideshow with a different theme
+    Given there is no directory named "slideshow"
+    When I successfully run `trickster init -t github slideshow`
+    Then a directory named "slideshow" should exist
+    And a file named "slideshow/slides" should exist
+    And "css/theme.css" in "slideshow" should be identical to "github.css"
+
+  Scenario: Can init a new slideshow with a custom theme
+    Given there is no directory named "slideshow"
+    When I successfully run `trickster init -t custom slideshow`
+    Then a directory named "slideshow" should exist
+    And a file named "slideshow/slides" should exist
+    And "css/theme.scss" in "slideshow" should be identical to "custom.scss"
+    But a file named "slideshow/css/theme.css" should not exist

@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Title of your slideshow</title>
+    <script src="js/lib/jquery-1.8.0.min.js"></script>
+    <script src="js/lib/highlight-7.1.min.js"></script>
+    <!--
+    <script src="js/lib/highlight-fc32801.min.js"></script>
+    -->
+    <script src="js/lib/jquerytypewriter.js"></script>
+    <script src="js/lib/underscore-1.3.3.min.js"></script>
+    <script src="js/utils.js"></script>
+    <script src="js/sizer.js"></script>
+    <script src="js/bullets.js"></script>
+    <script src="js/trickster.js"></script>
+    <script src="js/custom.js"></script>
+    <link rel="stylesheet" href="css/normalize.css">
+    <link rel="stylesheet" href="css/highlight-solarized_light.min.css">
+    <link rel="stylesheet" href="css/styles.css">
+    <script>
+      $(window).load(function() {
+        Trickster = TricksterLoader(TricksterDefaultConfig,{});
+        Trickster.load();
+      });
+    </script>
+  </head>
+  <body><div id="contents">
+    <section class='TITLE'>
+<h1>Title of your slideshow</h1>
+<h2>Subtitle</h2>
+<h3>Sub-sub title</h3>
+</section>
+<section class='SECTION' data-background='dddddd'>
+<h1>A section</h1>
+</section>
+<section class='BULLETS'>
+<h1>A bullet list</h1>
+<ul>
+<li>can use any</li>
+<li>reasonable</li>
+<li>bullet</li>
+</ul>
+</section>
+<section class='CODE'>
+<pre><code data-strikeouts='' data-callout-lines='3,4,5'><span class='line line-1 ' >class YourCode</span>
+<span class='line line-2 ' ></span>
+<div class='lines-callout'><span class='line line-3 line-callout' >  def initialize(will)</span>
+<span class='line line-4 line-callout' >    @be_highlighted</span>
+<span class='line line-5 line-callout' >  end</span>
+</div><span class='line line-6 ' ></span>
+<span class='line line-7 ' >end</span></code></pre>
+</section>
+<section class='IMAGE'>
+<img src='rudy.png'>
+</section>
+<section class='COMMANDLINE'>
+<pre><code class='no-highlight'><span class='cli-prompt'>&gt;</span> <span class='cli-element cli-command cli-line'> ls -ltr</span>
+<span class='cli-element cli-result'><span class='cli-line'>-rw-r--r--  1 David  staff   1697 Aug 28 10:03 notes.txt.md</span>
+<span class='cli-line'>-rw-r--r--  1 David  staff     97 Aug 28 10:03 trickster.rdoc</span>
+<span class='cli-line'>-rw-r--r--  1 David  staff   1339 Aug 28 10:03 Rakefile</span>
+<span class='cli-line'>-rw-r--r--  1 David  staff     25 Aug 28 10:03 Gemfile</span>
+<span class='cli-line'>drwxr-xr-x  7 David  staff    238 Sep 10 16:53 js</span>
+<span class='cli-line'>drwxr-xr-x  6 David  staff    204 Sep 10 16:53 features</span>
+<span class='cli-line'>drwxr-xr-x  3 David  staff    102 Sep 10 16:53 erb</span>
+<span class='cli-line'>drwxr-xr-x  5 David  staff    170 Sep 10 16:53 css</span>
+<span class='cli-line'>-rw-r--r--  1 David  staff   1254 Sep 10 16:53 trickster.gemspec</span>
+<span class='cli-line'>drwxr-xr-x  3 David  staff    102 Sep 10 16:53 bin</span>
+<span class='cli-line'>-rw-r--r--  1 David  staff    150 Sep 10 16:53 TODO</span>
+<span class='cli-line'>-rw-r--r--  1 David  staff   1563 Sep 10 16:53 Gemfile.lock</span>
+<span class='cli-line'>drwxr-xr-x  4 David  staff    136 Sep 10 16:58 lib</span>
+<span class='cli-line'>-rw-r--r--  1 David  staff   3991 Sep 10 17:01 README.rdoc</span>
+<span class='cli-line'>drwxr-xr-x  3 David  staff    102 Sep 10 17:07 tmp</span>
+<span class='cli-line'>-rw-r--r--  1 David  staff  87290 Sep 10 17:07 results.html</span>
+<span class='cli-line'>drwxr-xr-x  9 David  staff    306 Sep 10 17:19 test</span></span>
+<span class='cli-prompt'>&gt;</span> <span class='cli-element cli-command cli-line'> rm *</span>
+</code></pre>
+</section>
+
+  </div></body>
+</html>
