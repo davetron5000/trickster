@@ -16,3 +16,11 @@ Feature: I can build my slideshow
     Then a file named "index.html" should exist
     And a file named "css/styles.css" should exist
 
+  Scenario: Can build a slideshow using the custom stylesheet
+    Given a slideshow in "test_slideshow" that uses sass
+    When I cd to "test_slideshow"
+    And I successfully run `trickster update theme -t custom`
+    And I successfully run `trickster build`
+    Then a file named "index.html" should exist
+    And a file named "css/styles.css" should exist
+
