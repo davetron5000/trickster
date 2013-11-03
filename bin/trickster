@@ -80,7 +80,7 @@ EOF
       theme_copier = Trickster::ThemeCopier.new(BASE_DIR,dir)
       theme_copier.copy_theme(options[:theme])
 
-      puts "Your slideshow is ready, run trickster build to build it"
+      puts "Your slideshow is ready, cd to #{BASE_DIR} and run `trickster build`, then open index.html"
     end
   end
 end
