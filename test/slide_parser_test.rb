@@ -47,4 +47,26 @@ class SlideParserTest < Clean::Test::TestCase
       assert_equal @slides,@renderer.rendered_slides
     }
   end
+
+  test_that "comments are ignored" do
+    Given {
+      @slides = [
+        ['TITLE',[any_string,any_string]],
+        ['BULLETS',[any_string,any_string]],
+      ];
+      lines = @slides.map { |(slide_type,content)|
+        ["!#{slide_type}",content]
+      }.flatten
+      lines.unshift(any_string)
+      @renderer = RememberingRenderer.new
+      @parser = Trickster::SlideParser.new(lines,@renderer)
+    }
+    When {
+      @resulting_content = @parser.body
+    }
+    Then {
+      assert_equal @slides[0..2].inspect,@resulting_content
+      assert_equal @slides[0..2],@renderer.rendered_slides
+    }
+  end
 end

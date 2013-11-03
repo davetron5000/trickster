@@ -20,6 +20,7 @@ module Trickster
       content = []
       slide_type = nil
       @lines.each do |line|
+        next if line =~ /^-- /
         if line =~/^!(.*)$/
           block.call(slide_type,content) unless slide_type.nil?
           slide_type = $1
