@@ -2,9 +2,9 @@ module Trickster
   module Renderer
     class CodeRenderer
       def render(io,content,options)
-        content = read_file_if_content_is_filename(content)
+        content,extension = read_file_if_content_is_filename(content)
         content = wrap_lines_with_callouts(content,options)
-        io.puts "<pre><code #{language(options)}data-strikeouts='#{strikes(options)}' data-callout-lines='#{callouts(options)}'>#{content}</code></pre>"
+        io.puts "<pre><code #{language(options,extension)}data-strikeouts='#{strikes(options)}' data-callout-lines='#{callouts(options)}'>#{content}</code></pre>"
       end
 
     private
@@ -49,16 +49,24 @@ module Trickster
 
       def read_file_if_content_is_filename(content)
         if content[0] =~ /file:\/\/(.*$)/
-          File.open($1).readlines.map(&:chomp)
+          [File.open($1).readlines.map(&:chomp),content[0].split(/\./)[-1]]
         else
-          content
+          [content,nil]
         end
       end
 
-      def language(options)
+      EXTENSIONS = {
+        "rb" => "ruby",
+      }
+
+      def language(options,extension)
         language = ''
         if options =~/language=([^\s]+)/
           language = "class='#{$1}' "
+        else
+          if EXTENSIONS.key?(extension)
+            language = "class='#{EXTENSIONS[extension]}'"
+          end
         end
         language
       end
