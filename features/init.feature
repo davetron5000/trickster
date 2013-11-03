@@ -38,7 +38,7 @@ Feature: I can create a new slideshow
     And the directory "slideshow/js" should contain all the trickster JavaScript files and support libs
     And a directory named "slideshow/css" should exist
     And the directory "slideshow/css" should contain all the trickster CSS files and support stylesheets
-    And the output should contain "Your slideshow is ready, run trickster build to build it"
+    And the output should match /Your slideshow is ready/
     And "css/theme.css" in "slideshow" should be identical to "default.css"
 
   Scenario: Can init a new slideshow with a different theme

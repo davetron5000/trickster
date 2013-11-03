@@ -10,11 +10,13 @@ var TricksterDefaultConfig = {
                     39,  // right arrow
                     34,  // Kensington presenter right arrow
                     32], // space bar
+  advanceSwipe: "left",
   /** Keycodes that go back to the previous slide */
   backKeycodes:    [75,  // k
                     37,  // left arrow
                     33,  // Kensington presenter left arrow
                     8],  // delete
+  backSwipe: "right",
   startOverKeycodes: [66], // Kensington presenter down/stop
   /** These keycodes, if encountered, will not be sent along
       to the browser.  Useful if there might be some vertical
@@ -137,6 +139,22 @@ var TricksterLoader = function(config,functions) {
     bindKeys([187],Trickster.embiggen); // +
   }
 
+  function setupSwiping() {
+    $("body").swipe({
+      swipe: function(event,direction,distance,duration,fingerCount) {
+        if (direction == config.advanceSwipe) {
+          Trickster.advance();
+        }
+        else if (direction == config.backSwipe) {
+          Trickster.back();
+        }
+        else {
+          alert("Swiped " + direction);
+        }
+      },
+    });
+  }
+
   function hideAllSlides() {
     $("section").css("display","none");
     $("li").css("visibility","hidden");
@@ -156,6 +174,7 @@ var TricksterLoader = function(config,functions) {
       Trickster.totalSlides = slides().length;
       initCurrentSlide();
       setupKeyBindings();
+      setupSwiping();
       syntaxHighlighter().highlight();
       sizeAllToFit();
       hideAllSlides();
