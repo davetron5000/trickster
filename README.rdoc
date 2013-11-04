@@ -105,7 +105,7 @@ These slides take the first three lines of content and display them in an +H1+, 
 
 == Timer
 
-Currently, there will be a small timer on the bottom right of your presentation.  By default, it will show the number of minutes elapsed since you clicked the play button.  It can be customized:
+Currently, there will be a small timer on the bottom left of your presentation.  By default, it will show the number of minutes elapsed since you clicked the play button.  It can be customized:
 
 * If you don't want to use the timer, simply add <code>display: none</code> to the <code>#timer</code> stanza in the stylesheet.
 * If your presentation might go over an hour, remove <code>display: none</code> from the <code>#timer .hours</code> stanza in the stylesheet.
