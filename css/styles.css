@@ -66,3 +66,37 @@ li {
   margin-right: 1em;
   line-height: 2em;
 }
+
+#timer {
+  position: fixed;
+  left: 1em;
+  bottom: 1em;
+  /* uncomment this to remove the timer
+  display: none;
+  */
+}
+
+#timer .seconds {
+  display: none; /* remove this to show seconds elapsing */
+}
+
+#timer .hours {
+  display: none; /* remove this to show the hours field */
+}
+
+#timer a {
+  text-decoration: none;
+}
+#timer #clock, #timer #controls {
+  display: inline;
+}
+
+#timer #pause {
+  letter-spacing: -0.2em;
+}
+
+#timer #controls {
+  /* Uncomment this if you want to hide the timer controls
+  display: none; 
+  */
+}

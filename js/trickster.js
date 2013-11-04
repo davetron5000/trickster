@@ -17,7 +17,12 @@ var TricksterDefaultConfig = {
                     33,  // Kensington presenter left arrow
                     8],  // delete
   backSwipe: "right",
-  startOverKeycodes: [66], // Kensington presenter down/stop
+  startOverKeycodes: [], // not really needed since you can just refresh the browser window
+  startTimerKeycodes: [66, // Kensington presenter down/stop aka "b"
+                       80  // p
+                      ],
+  pauseTimerKeycodes: [65  // a
+                      ],
   /** These keycodes, if encountered, will not be sent along
       to the browser.  Useful if there might be some vertical
       scrolling and 32/33/34 would otherwise scroll */
@@ -130,13 +135,17 @@ var TricksterLoader = function(config,functions) {
     });
   }
 
-  function setupKeyBindings() {
+  function setupKeyBindings(timer) {
     bindKeys(config.advanceKeycodes,Trickster.advance);
     bindKeys(config.backKeycodes,Trickster.back);
     bindKeys(config.startOverKeycodes,Trickster.startOver);
     preventDefaultKeyCodeAction(config.keyCodesPreventingDefault);
     bindKeys([189],Trickster.shrink);   // -
     bindKeys([187],Trickster.embiggen); // +
+    if (timer) {
+      bindKeys(config.startTimerKeycodes,timer.play);
+      bindKeys(config.pauseTimerKeycodes,timer.pause);
+    }
   }
 
   function setupSwiping() {
@@ -169,11 +178,11 @@ var TricksterLoader = function(config,functions) {
     previousSlide: 0,
 
     /** Set everything up for the slideshow */
-    load: function() {
+    load: function(timer) {
       // Order matters here
       Trickster.totalSlides = slides().length;
       initCurrentSlide();
-      setupKeyBindings();
+      setupKeyBindings(timer);
       setupSwiping();
       syntaxHighlighter().highlight();
       sizeAllToFit();

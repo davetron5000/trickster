@@ -103,6 +103,16 @@ Prompts can be <tt>></tt>, <tt>%</tt>, and <tt>#</tt>.
 
 These slides take the first three lines of content and display them in an +H1+, +H2+, and +H3+, respectively.  All other lines are ignored.
 
+== Timer
+
+Currently, there will be a small timer on the bottom right of your presentation.  By default, it will show the number of minutes elapsed since you clicked the play button.  It can be customized:
+
+* If you don't want to use the timer, simply add <code>display: none</code> to the <code>#timer</code> stanza in the stylesheet.
+* If your presentation might go over an hour, remove <code>display: none</code> from the <code>#timer .hours</code> stanza in the stylesheet.
+* If you want to see seconds elapsing,  remove <code>display: none</code> from the <code>#timer .seconds</code> stanza in the stylesheet.
+* If you want to hide the controls (e.g. because you know the keyboard shortcuts or have a presentation remote), add <code>display: none</code> to the <code>#controls</code> stanza in the stylesheet.
+* You can adjust the style in any other way you see fit in the stylsheet
+
 == Customizations/Styling
 
 You have two points of customization: +custom.js+, which is loaded *after* all the other JS, but before the +load+ event.  This is where you can override Trickster's configuration if you like (e.g. for default transition time).
@@ -123,6 +133,8 @@ Every time you reload, the presentation will be dynamically sized to the size of
 
 Occasionally, Trickster will size the slides too larger or too small.  In that case, you can use "-" and "+" to resize the slides on the fly.  Note that if you you reload, the sizes will be reset.
 
+Finally, if you want to see your elapsed time, click the play button before you start (see keyboard shortcuts below).
+
 === Keyboard Commands
 
 advance:: "j", space-bar, right-arrow, or the advance button on the Kensington Wireless Presenter.
@@ -130,6 +142,8 @@ back:: "k", backspace, left-arrow, or the back button the Kensington Wireless Pr
 restart:: down/stop button on the Kensington Wireless Presenter.
 increase font-size:: "+" or "=" (font-size will be reset if you reload the page)
 decrease font-size:: "-" (font-size will be reset if you reload the page)
+start timer:: down on your Kensington remote, or "p"
+pause timer:: "a"
 
 == Tips
 

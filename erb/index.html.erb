@@ -14,18 +14,42 @@
     <script src="js/sizer.js"></script>
     <script src="js/bullets.js"></script>
     <script src="js/trickster.js"></script>
+    <script src="js/timer.js"></script>
     <script src="js/custom.js"></script>
     <link rel="stylesheet" href="css/normalize.css">
     <link rel="stylesheet" href="css/theme.css">
     <link rel="stylesheet" href="css/styles.css">
     <script>
       $(window).load(function() {
+        TricksterTimer = TricksterTimer(TricksterDefaultConfig,{});
+        TricksterTimer.setup();
+
         Trickster = TricksterLoader(TricksterDefaultConfig,{});
-        Trickster.load();
+        Trickster.load(TricksterTimer);
+
       });
     </script>
   </head>
   <body><div id="contents">
     <%= body %>
-  </div></body>
+    </div>
+    <aside id="timer">
+      <div id="clock">
+        <span class="hours">
+          <span id="hour">0</span> :
+        </span>
+        <span class="minutes">
+          <span id="minute">00</span> 
+        </span>
+        <span class="seconds"> : 
+          <span id="second">00</span>
+        </span>
+      </div>
+      <div id="controls">
+        <a id="stop" href="#" onclick="return TricksterTimer.stop();">◼</a>
+        <a id="play" href="#" onclick="return TricksterTimer.play();">▶</a>
+        <a id="pause" href="#" onclick="return TricksterTimer.pause();">▮▮</a>
+      </div>
+    </aside>    
+  </body>
 </html>
