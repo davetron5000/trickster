@@ -43,3 +43,21 @@ drwxr-xr-x  3 David  staff    102 Sep 10 17:07 tmp
 drwxr-xr-x  9 David  staff    306 Sep 10 17:19 test
 > rm *
 
+!FREEFORM
+<h1>This is a freeform slide</h1>
+<table>
+  <thead><tr>
+    <th>Name</th><th>Age</th><th>Role</th>
+  </tr></thead>
+  <tbody>
+    <tr>
+      <td>Dave</td><td>40</td><td>Husband</td>
+    </tr>
+    <tr>
+      <td>Amy</td><td>One shouldn't ask</td><td>Wife</td>
+    </tr>
+    <tr>
+      <td>Rudy</td><td>13</td><td>Cat</td>
+    </tr>
+  </tbody>
+</table>

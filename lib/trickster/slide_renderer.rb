@@ -21,6 +21,7 @@ module Trickster
       hash["COMMANDLINE"] = Renderer::CommandlineRenderer.new
       hash["BULLETS"] = Renderer::BulletsRenderer.new
       hash["CODE"] = Renderer::CodeRenderer.new
+      hash["FREEFORM"] = Renderer::FreeformRenderer.new
     }.freeze
 
     def write_slide(slide_type,content,slide)

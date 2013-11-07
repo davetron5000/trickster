@@ -59,6 +59,10 @@ The first line is the url to the image to show.  Trickster will size the image d
 
 If the first line starts with <tt>file://</tt>, the contents of this file is read in as the contents of the code block.  Otherwise, the entire contents of the slide is verbatim put into a +pre+ and then +code+ block.  Syntax highlighting is done using +highlight.js+.
 
+== FREEFORM
+
+The slide's content is passed through verbatim (keeping in mind that blank lines are slide delimiters).  This allows you to do more sophisticated layouts like tables or floats.
+
 === Language
 
 By default, no language is specified for highlighting, so +highlight.js+ will make a guess.  If you'd like to be explicit, use the +language+ option, e.g.

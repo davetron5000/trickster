@@ -85,6 +85,25 @@ class SlideRendererTest < Clean::Test::TestCase
     }
   end
 
+  test_that "a free-form slide just passes through the HTML" do
+    Given {
+      @html = %{<h1>This is some stuff</h1>
+      <table>
+        <thead><tr><th>Name</th><th>Age</th></tr></thead>
+        <tbody>
+          <tr><td>Bob</td><td>24</td></tr>
+          <tr><td>Rudy</td><td>13</td></tr>
+        </tbody>
+      </table>}
+    }
+    When {
+      @renderer.render_slide("FREEFORM",@html.split("\n"))
+    }
+    Then {
+      assert_content("FREEFORM",@html,@renderer.content)
+    }
+  end
+
   test_that "bullets get the first line as title, remainder as bullets, removing the bullet char" do
     Given {
       @title = any_string

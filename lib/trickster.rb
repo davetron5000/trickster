@@ -1,5 +1,6 @@
 require 'trickster/version'
 require 'trickster/slide_parser'
+require 'trickster/renderer/freeform_renderer'
 require 'trickster/renderer/code_renderer'
 require 'trickster/renderer/bullets_renderer'
 require 'trickster/renderer/commandline_renderer'
