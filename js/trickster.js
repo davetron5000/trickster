@@ -26,7 +26,10 @@ var TricksterDefaultConfig = {
   /** These keycodes, if encountered, will not be sent along
       to the browser.  Useful if there might be some vertical
       scrolling and 32/33/34 would otherwise scroll */
-  keyCodesPreventingDefault: [ 34, 32, 33 ]
+  keyCodesPreventingDefault: [ 34, 32, 33 ],
+  lengthMinutes: 3,
+  lengthWarnAt: 1,
+  lengthAlertAt: 2
 };
 /** Loads Trickster.
  * config: configuration, or TricksterDefaultConfig to get the defaults
@@ -156,9 +159,6 @@ var TricksterLoader = function(config,functions) {
         }
         else if (direction == config.backSwipe) {
           Trickster.back();
-        }
-        else {
-          alert("Swiped " + direction);
         }
       },
     });

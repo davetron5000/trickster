@@ -19,15 +19,33 @@ var TricksterTimer = function(config,functions) {
 
   function tick() {
     if (!paused) {
-      var now    = (new Date()).getTime();
-      var diff   = (now - start) / 1000;
-      var hour   = Math.floor(diff / (60 * 60));
-      var minute = pad((Math.floor(diff / 60) % 60));
-      var second = pad(Math.floor(diff % 60));
+      var now      = (new Date()).getTime();
+      var diff     = (now - start) / 1000;
+      var diffMins = diff / 60;
+      var hour     = Math.floor(diff / (60 * 60));
+      var minute   = pad((Math.floor(diff / 60) % 60));
+      var second   = pad(Math.floor(diff % 60));
 
       $("#hour").text(hour);
       $("#minute").text(minute);
       $("#second").text(second);
+
+      $("#timer").removeClass("time-ok");
+      $("#timer").removeClass("time-over");
+      $("#timer").removeClass("time-alert");
+      $("#timer").removeClass("time-warn");
+      if (diffMins >= config.lengthMinutes) {
+        $("#timer").addClass("time-over");
+      }
+      else if (diffMins >= config.lengthAlertAt) {
+        $("#timer").addClass("time-alert");
+      }
+      else if (diffMins >= config.lengthWarnAt) {
+        $("#timer").addClass("time-warn");
+      }
+      else {
+        $("#timer").addClass("time-ok");
+      }
     }
 
     if (running) {
@@ -63,6 +81,7 @@ var TricksterTimer = function(config,functions) {
     $("#play").hide();
     $("#pause").show();
     if (!running) {
+      start = (new Date()).getTime();
       running = true;
       tick();
     }
