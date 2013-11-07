@@ -117,6 +117,17 @@ Currently, there will be a small timer on the bottom left of your presentation. 
 * If you want to hide the controls (e.g. because you know the keyboard shortcuts or have a presentation remote), add <code>display: none</code> to the <code>#controls</code> stanza in the stylesheet.
 * You can adjust the style in any other way you see fit in the stylsheet
 
+=== Timing
+
+The config allows you to specify the length of your talk, a time at which to warn you, and a time at which to alert you.  These all boil down to adding CSS to the timer:
+
+* If you are under time, alerting, and warning, <code>time-ok</code> is the class of the timer.
+* If you are under time and alerting, but over for the warning, <code>time-warn</code> is the class of the timer.
+* If you are under time but over alerting, <code>time-alert</code> is the class of the timer.
+* If you are over time, <code>time-over</code> is the class of the timer.
+
+You can modify what happens with these styles in your <code>styles.css</code>.
+
 == Customizations/Styling
 
 You have two points of customization: +custom.js+, which is loaded *after* all the other JS, but before the +load+ event.  This is where you can override Trickster's configuration if you like (e.g. for default transition time).
