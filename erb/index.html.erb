@@ -29,6 +29,10 @@
 
       });
     </script>
+    <% if typekit_id %>
+    <script src="//use.typekit.net/<%= typekit_id %>.js"></script>
+    <script>try{Typekit.load();}catch(e){}</script>
+    <% end %>
   </head>
   <body><div id="contents">
     <%= body %>
